@@ -48,14 +48,14 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
 
                                     <div class="form-group">
                                         <label for="question_text">Текст вопроса</label>
-                                        <textarea name="question_text" id="<?php echo $questions_list->id ?>question_text" rows="2" placeholder="Введите текст вопроса"
+                                        <textarea name="question_text" id="<?php echo $questions_list->id ?>question_text" rows="2" placeholder="Введите текст вопроса" oninput="oldquestion('<?php echo $questions_list->id; ?>')"
                                                   class="form-control"><?php echo $questions_list->text; ?></textarea>
                                         <span class="text-danger"><?php if (isset($question_text_error)) echo $question_text_error; ?></span>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="comment_text">Комментарий к вопросу (не обязательно)</label>
-                                        <textarea name="comment_text" id="<?php echo $questions_list->id ?>comment_text" rows="1"
+                                        <textarea name="comment_text" id="<?php echo $questions_list->id ?>comment_text" rows="1" oninput="oldquestion('<?php echo $questions_list->id; ?>')"
                                                   placeholder="Будет показываться на странице результатов"
                                                   class="form-control"><?php echo $questions_list->comment; ?></textarea>
                                         <span class="text-danger"><?php if (isset($comment_text_error)) echo $comment_text_error; ?></span>
@@ -83,7 +83,6 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                     <div class="form-group">
                                         <a name="preview-button" id="<?php echo $questions_list->id ?>"
                                            onclick="$('#popup1').w2popup()" class="btn btn-info">Превью</a>
-                                        <a name="oldquestion" onclick="oldquestion('<?php echo $questions_list->id; ?>')" class="btn btn-success">Сохранить</a>
                                         <a name="oldquestion_delete" onclick="oldquestion_delete('<?php echo $questions_list->id; ?>')" class="btn btn-danger" >Удалить</a>
                                     </div>
                                 </fieldset>
@@ -112,7 +111,7 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                                             <span class="input-group-addon success"><span
                                                                         class="glyphicon glyphicon-ok"></span></span>
                                                         <?php } ?>
-                                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text"
+                                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text" oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                                placeholder="Введите текст ответа"
                                                                                                                               value="<?php echo $answer_object->answer_text; ?>"
                                                                class="form-control form-control-success"/>
@@ -122,7 +121,6 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                                     <?php if ($answer_object->answer_true == 0) { ?>
                                                         <a name="correctanswer" onclick="correctanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-info">Правил.</a>
                                                     <?php } ?>
-                                                    <a name="editanswer" onclick="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-success">Сохр.</a>
                                                     <?php if ($answer_object->answer_true == 0) { ?>
                                                         <a name="deleteanswer" onclick="deleteanswer('<?php echo $questions_list->id; ?>', '<?php echo $answer_object->id; ?>', '<?php echo $answer_object->answer_number; ?>')" class="btn btn-sm btn-danger">Уд.</a>
                                                     <?php } ?>
@@ -162,7 +160,7 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                                             <span class="input-group-addon success"><span
                                                                         class="glyphicon glyphicon-ok"></span></span>
                                                         <?php } ?>
-                                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text"
+                                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text" oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                                placeholder="Введите текст ответа"
                                                                                                                               value="<?php echo $answer_object->answer_text; ?>"
                                                                class="form-control form-control-success"/>
@@ -171,7 +169,6 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
 
                                                 <div class="col-sm-3 input-group">
                                                     <a name="correctanswer" onclick="correctanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-info">Правил.</a>
-                                                    <a name="editanswer" onclick="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-success">Сохр.</a>
                                                     <?php if ($result_select_answer->num_rows > 1) { ?>
                                                         <a name="deleteanswer" onclick="deleteanswer('<?php echo $questions_list->id; ?>', '<?php echo $answer_object->id; ?>', '<?php echo $answer_object->answer_number; ?>')" class="btn btn-sm btn-danger">Уд.</a>
                                                     <?php } ?>
@@ -202,13 +199,10 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                         <b>Ответ:</b>
                                         <fieldset>
                                             <hr/>
-                                            <div class="col-sm-10">
-                                                <input type="text" id="<?php echo $questions_list->id ?>answer_text_new" name="answer_text_new" placeholder="Введите текст ответа"
+                                            <div class="col-sm-12">
+                                                <input type="text" id="<?php echo $questions_list->id ?>answer_text_new" name="answer_text_new" placeholder="Введите текст ответа" oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                                                                               value="<?php echo $input_answer->answer_text; ?>"
                                                        class="form-control form-control-success"/>
-                                            </div>
-                                            <div class="col-sm-2 input-group">
-                                                <a name="editanswer" onclick="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-success">Сохр.</a>
                                             </div>
                                         </fieldset>
                                         <?php
@@ -222,20 +216,19 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                             <fieldset>
                                                 <hr/>
                                                 <div class="col-sm-5">
-                                                    <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text"
+                                                    <input type="text" id="<?php echo $answer_object->id ?>answer_text" name="answer_text" oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                            placeholder="Введите текст ответа"
                                                            required value="<?php echo $answer_object->answer_text; ?>"
                                                            class="form-control form-control-success"/>
                                                 </div>
 
                                                 <div class="col-sm-5">
-                                                    <input type="text" id="<?php echo $answer_object->id ?>answer_text2" name="answer_text2"
+                                                    <input type="text" id="<?php echo $answer_object->id ?>answer_text2" name="answer_text2" oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                            placeholder="Введите текст соответствия"
                                                            required value="<?php echo $answer_object->answer_text2; ?>"
                                                            class="form-control form-control-success"/>
                                                 </div>
                                                 <div class="col-sm-2 input-group">
-                                                    <a name="editanswer" onclick="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')" class="btn btn-sm btn-success">Сохр.</a>
                                                     <?php if ($result_select_answer->num_rows > 1) { ?>
                                                         <a name="deleteanswer" onclick="deleteanswer('<?php echo $questions_list->id; ?>', '<?php echo $answer_object->id; ?>', '<?php echo $answer_object->answer_number; ?>')" class="btn btn-sm btn-danger">"Уд."</a>
                                                     <?php } ?>
@@ -287,13 +280,12 @@ $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
                                     <fieldset>
                                         <hr/>
                                         <div class="col-sm-10 ">
-                                                <input type="text" id="<?php echo $tip_object->id ?>tip_text" name="tip_text"
+                                                <input type="text" id="<?php echo $tip_object->id ?>tip_text" name="tip_text" oninput="edittip('<?php echo $questions_list->id; ?>', '<?php echo $tip_object->id; ?>')"
                                                        placeholder="Введите текст подсказки"
                                                        value="<?php echo $tip_object->tip_text; ?>"
                                                        class="form-control form-control-success"/>
                                         </div>
                                         <div class="col-sm-2 input-group">
-                                            <a name="edittip" onclick="edittip('<?php echo $questions_list->id; ?>', '<?php echo $tip_object->id; ?>')" class="btn btn-sm btn-success">Сохр.</a>
                                             <a name="deletetip" onclick="deletetip('<?php echo $questions_list->id; ?>', '<?php echo $tip_object->id; ?>', '<?php echo $tip_object->tip_number; ?>')" class="btn btn-sm btn-danger">Уд.</a>
                                         </div>
                                     </fieldset>
