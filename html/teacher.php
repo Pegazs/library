@@ -94,7 +94,8 @@ if (isset($_POST['change'])) {
 				<a href="resultsTeacher.php" class="btn btn-primary btn-block">Результаты тестов</a>
 				<a href="groups.php" class="btn btn-primary btn-block">Группы</a>
                 <a href="library" class="btn btn-primary btn-block">Библиотека</a>
-				<a href="editUser.php" class="btn btn-primary btn-block">Редактировать данные</a>
+                <a href="structure.php" class="btn btn-primary btn-block">Структура</a>
+				<a href="editUser.php" class="btn btn-primary btn-block">Ред. данные</a>
 				<a href="password.php" class="btn btn-primary btn-block">Сменить пароль</a>
 			</div>
 		</div>

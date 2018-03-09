@@ -110,7 +110,7 @@ if (isset($_POST['start'])) {
         <div class="col-md-2">
             <a href="resultsUser.php" class="btn btn-primary btn-block">Результаты тестов</a>
             <a href="library" class="btn btn-primary btn-block">Библиотека</a>
-            <a href="editUser.php" class="btn btn-primary btn-block">Редактировать данные</a>
+            <a href="editUser.php" class="btn btn-primary btn-block">Ред. данные</a>
             <a href="password.php" class="btn btn-primary btn-block">Сменить пароль</a>
         </div>
     </div>
