@@ -19,36 +19,6 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
     <script src="js/jquery.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js"></script>
     <style type="text/css">
-        .input-group-addon.primary {
-            color: rgb(255, 255, 255);
-            background-color: rgb(50, 118, 177);
-            border-color: rgb(40, 94, 142);
-        }
-
-        .input-group-addon.success {
-            color: rgb(255, 255, 255);
-            background-color: rgb(92, 184, 92);
-            border-color: rgb(76, 174, 76);
-        }
-
-        .input-group-addon.info {
-            color: rgb(255, 255, 255);
-            background-color: rgb(57, 179, 215);
-            border-color: rgb(38, 154, 188);
-        }
-
-        .input-group-addon.warning {
-            color: rgb(255, 255, 255);
-            background-color: rgb(240, 173, 78);
-            border-color: rgb(238, 162, 54);
-        }
-
-        .input-group-addon.danger {
-            color: rgb(255, 255, 255);
-            background-color: rgb(217, 83, 79);
-            border-color: rgb(212, 63, 58);
-        }
-
         body {
             font-family: Arail, sans-serif;
         }
@@ -145,7 +115,7 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             if (inputVal.length) {
                 $.get("section_operations/section-add.php", {term: inputVal, type: type}).done(function (data) {
                     // Display the returned data in browser
-                    create_delete(data);
+                    create_edit(data, inputVal);
                     show_library(data);
                     if (type != "theme") {
                         show_slaves(data);
@@ -192,7 +162,7 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
 
         function section_id(name, type) {
             $.get("section_operations/section-id.php", {term: name, type: type}).done(function (data) {
-                create_delete(data);
+                create_edit(data, name);
                 show_library(data);
                 if (type != "theme") {
                     show_slaves(data);
@@ -237,11 +207,18 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             });
         }
 
-        function create_delete(id) {
+        function create_edit(id, name) {
             global_id = id;
-            element = document.getElementById("delete-box");
-            $(element).html("<hr/><a name=\"delete\" onclick=\"delete_section('" + id + "')\" class=\"btn btn-sm btn-danger\">Удалить</a>");
+            element = document.getElementById("edit-box");
+            $(element).html("<hr/><h4>Изменение данных:</h4>" +
+                "<div class=\"col-sm-11\"><input type=\"text\" id=\"edit-name\" oninput=\"edit_section('" +
+                id +
+                "')\" placeholder=\"Введите название\" value=\"" +
+                name +
+                "\" class=\"form-control\"/></div>" +
+                "<div class=\"col-sm-1\"><a name=\"delete\" onclick=\"delete_section('" + id + "')\" class=\"btn btn-sm btn-danger\">Удалить</a></div><br><hr/>");
         }
+
 
         function delete_section(id) {
             $.get("section_operations/delete-section.php", {
@@ -251,10 +228,21 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
                 $(element).html("");
                 element = document.getElementById("slaves-box");
                 $(element).html("");
-                element = document.getElementById("delete-box");
+                element = document.getElementById("edit-box");
                 $(element).html("");
                 var searchinput = document.getElementById("global-name");
                 searchinput.value = "";
+            });
+        }
+
+        function edit_section(id) {
+            var name = document.getElementById("edit-name").value;
+            $.get("section_operations/edit-section.php", {
+                id: id,
+                name: name
+            }).done(function (data) {
+                show_library(id);
+                show_slaves(id);
             });
         }
 
@@ -315,25 +303,12 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             </div>
             <div id="library-box">
             </div>
-            <div id="delete-box" style="text-align: center;">
+            <div id="edit-box">
             </div>
         </div>
     </div>
 </div>
 
-
-<script type="text/javascript">
-    $(function () {
-        var focusedElement;
-        $(document).on('focus', 'input', function () {
-            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
-            focusedElement = this;
-            setTimeout(function () {
-                focusedElement.select();
-            }, 50); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
-        });
-    });
-</script>
 </body>
 </html>
 
