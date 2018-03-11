@@ -79,36 +79,6 @@ if (isset($id)) {
 mysqli_close($con);
 ?>
 
-<!--<script type="text/javascript">-->
-<!--    $(document).ready(function () {-->
-<!---->
-<!--        $("#slave-name").on("keyup input", function () {-->
-<!--            /* Get input value on change */-->
-<!--            alert($(this).val());-->
-<!--            var inputVal = $(this).val();-->
-<!--            var type = document.getElementById("slave-type").value;-->
-<!--            var resultDropdown = $(this).siblings(".result");-->
-<!--            if (inputVal.length) {-->
-<!--                $.get("section_operations/section-search.php", {term: inputVal, type: type}).done(function (data) {-->
-<!--                    alert(data);-->
-<!--                    // Display the returned data in browser-->
-<!--                    resultDropdown.html(data);-->
-<!--                });-->
-<!--            } else {-->
-<!--                resultDropdown.empty();-->
-<!--            }-->
-<!--        });-->
-<!---->
-<!--        // Set search input value on click of result item-->
-<!--        $(document).on("click", "#result-slave p", function () {-->
-<!--            $(this).parents(".search-box").find('input[type="text"]').val($(this).text());-->
-<!--            add_slave($(this).text(), , document.getElementById("slave-type").value);-->
-<!--            $(this).parent(".result").empty();-->
-<!--        });-->
-<!--    });-->
-<!---->
-<!--</script>-->
-
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -130,7 +100,7 @@ mysqli_close($con);
         // Set search input value on click of result item
         $(document).on("click", "#result-slave p", function () {
             $(this).parents(".search-box").find('input[type="text"]').val($(this).text());
-            new_slave();
+            add_slave($(this).text(), document.getElementById("slave-type").value);
             $(this).parent(".result").empty();
         });
     });

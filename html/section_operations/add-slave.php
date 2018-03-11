@@ -10,6 +10,14 @@ $section_id = mysqli_real_escape_string($con, $_REQUEST['global_id']);
 $slave_name = mysqli_real_escape_string($con, $_REQUEST['name']);
 $slave_type = mysqli_real_escape_string($con, $_REQUEST['type']);
 
+if ($type == "Дисциплина") {
+    $slave_type = "discipline";
+} else if ($type == "Раздел") {
+    $slave_type = "section";
+} else if ($type == "Тема") {
+    $slave_type = "theme";
+}
+
 if (isset($section_id) && isset($slave_name) && isset($slave_type)) {
 
     $sql = "SELECT * FROM sections WHERE name = '" . $slave_name . "' AND type = '" . $slave_type . "'";
