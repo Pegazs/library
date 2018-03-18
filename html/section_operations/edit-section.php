@@ -8,8 +8,10 @@ if ($con === false) {
 
 $id = mysqli_real_escape_string($con, $_REQUEST['id']);
 $name = mysqli_real_escape_string($con, $_REQUEST['name']);
-$query = "UPDATE sections SET name = '" . $name . "' WHERE id = " . $id;
-$result = mysqli_query($con, $query);
+if (strlen($name) > 0) {
+    $query = "UPDATE sections SET name = '" . $name . "' WHERE id = " . $id;
+    $result = mysqli_query($con, $query);
+}
 
 // close connection
 mysqli_close($con);

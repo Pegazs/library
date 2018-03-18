@@ -30,11 +30,12 @@ if (isset($id)) {
     echo "»:</h4>";
 
 
-    $query = "SELECT * FROM sections_hierarchy, sections WHERE id_master = " . $id . " AND id_slave = id ORDER BY type";
+    $query = "SELECT * FROM sections_hierarchy, sections WHERE id_master = " . $id . " AND id_slave = id ORDER BY slave_number";
     $result = mysqli_query($con, $query);
     $found = mysqli_num_rows($result);
 
     if ($found > 0) {
+        echo "<ol>";
         while ($row = mysqli_fetch_array($result)) {
             if ($row['type'] == "discipline") {
                 $typeName = "Дисциплина";
@@ -46,9 +47,26 @@ if (isset($id)) {
                 $typeName = "Тема";
                 $typeNameRod = "темы";
             }
-            echo "<li><b>$typeName:</b> $row[name]";
-            echo " <a nohref style=\"cursor:pointer;color:blue;text-decoration:underline\" onclick='delete_slave($id, $row[id])'>[открепить]</a></li>";
+            echo "<li>";
+            if ($row['slave_number'] > 1) {
+                echo "<a nohref style=\"cursor:pointer;color:#003399;\" onclick='slave_up($id, $row[id_slave])'>↑</a>&nbsp;";
+            } else {
+                echo "&nbsp;&nbsp;&nbsp;";
+            }
+            if ($row['slave_number'] != $found) {
+                echo "<a nohref style=\"cursor:pointer;color:#003399;\" onclick='slave_down($id, $row[id_slave])'>↓</a>&nbsp;";
+            } else {
+                echo "&nbsp;&nbsp;&nbsp;";
+            }
+            echo "<b>$typeName:</b> <a nohref style=\"cursor:pointer;color:#6699CC\" onclick=\"go_to($row[id_slave], ";
+            echo "'";
+            echo $row['name'];
+            echo "', '" ;
+            echo $row['type'];
+            echo "')\">$row[name]</a>";
+            echo " <a nohref style=\"cursor:pointer;color:#CC0000;\" onclick='delete_slave($id, $row[id_slave])'>[открепить]</a></li>";
         }
+        echo "</ol>";
         echo "<br>";
     }
 

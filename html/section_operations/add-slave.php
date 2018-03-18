@@ -21,12 +21,14 @@ if ($type == "Дисциплина") {
 if (isset($section_id) && isset($slave_name) && isset($slave_type)) {
 
     $sql = "SELECT * FROM sections WHERE name = '" . $slave_name . "' AND type = '" . $slave_type . "'";
-    if ($result = mysqli_query($con, $sql)) {
+    $sql_sum = "SELECT * FROM sections_hierarchy WHERE id_master = " . $section_id;
+    if (($result = mysqli_query($con, $sql)) && ($result_sum = mysqli_query($con, $sql_sum))) {
         if (mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_array($result);
             $slave_id = $row['id'];
             if ($section_id != $slave_id) {
-                mysqli_query($con, "INSERT INTO sections_hierarchy(id_master,id_slave) VALUES(" . $section_id . "," . $slave_id . ")");
+                $slave_number = mysqli_num_rows($result_sum)+1;
+                mysqli_query($con, "INSERT INTO sections_hierarchy(id_master,id_slave,slave_number) VALUES('" . $section_id . "','" . $slave_id . "','" . $slave_number . "')");
             }
             mysqli_free_result($result);
         }

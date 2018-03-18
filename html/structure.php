@@ -2,8 +2,12 @@
 session_start();
 include_once 'dbconnect.php';
 
-if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
+if (empty($_SESSION['usr_id']) or ($_SESSION['usr_role'] != 'teacher' and $_SESSION['usr_role'] != 'admin')) {
     header("Location: index.php");
+}
+
+if (!empty($_GET['id']) && isset($_GET['id'])) {
+    $section_id = mysqli_real_escape_string($con, $_GET['id']);
 }
 
 ?>
@@ -104,6 +108,13 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
                 section_id($(this).text(), document.getElementById("global-type").value);
                 $(this).parent(".result").empty();
             });
+
+            <?php
+                if ($section_id != null && $section_id != "") {
+                    echo "section_url($section_id)";
+                }
+            ?>
+
         });
 
         function new_section() {
@@ -115,7 +126,10 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             if (inputVal.length) {
                 $.get("section_operations/section-add.php", {term: inputVal, type: type}).done(function (data) {
                     // Display the returned data in browser
-                    create_edit(data, inputVal);
+                    global_id = data;
+                    <?php if ($_SESSION['usr_role'] == 'admin') {
+                    echo "create_edit(data, inputVal);";
+                } ?>
                     show_library(data);
                     if (type != "theme") {
                         show_slaves(data);
@@ -160,9 +174,70 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             });
         }
 
+        function slave_up(master_id, slave_id) {
+            $.get("section_operations/move-slave.php", {
+                master_id: master_id,
+                slave_id: slave_id,
+                direction: "up"
+            }).done(function (data) {
+                show_slaves(master_id);
+            });
+        }
+
+        function slave_down(master_id, slave_id) {
+            $.get("section_operations/move-slave.php", {
+                master_id: master_id,
+                slave_id: slave_id,
+                direction: "down"
+            }).done(function (data) {
+                show_slaves(master_id);
+            });
+        }
+
+        function start_page(id) {
+            var value = document.getElementById("start_page_"+id).value;
+            $.get("section_operations/set-page.php", {
+                section_id: id,
+                page: value,
+                start_end: "start"
+            }).done(function (data) {
+
+            });
+        }
+
+        function end_page(id) {
+            var value = document.getElementById("end_page_"+id).value;
+            $.get("section_operations/set-page.php", {
+                section_id: id,
+                page: value,
+                start_end: "end"
+            }).done(function (data) {
+            });
+        }
+
+        function section_url(id) {
+            $.get("section_operations/section-id.php", {id: id}).done(function (data) {
+                var dataArray = data.split("|");
+                global_id = id;
+                <?php if ($_SESSION['usr_role'] == 'admin') {
+                echo "create_edit(id, dataArray[0]);";
+            } ?>
+                show_library(id);
+                if (dataArray[1] != "theme") {
+                    show_slaves(id);
+                } else {
+                    var element = document.getElementById("slaves-box");
+                    $(element).html("");
+                }
+            });
+        }
+
         function section_id(name, type) {
             $.get("section_operations/section-id.php", {term: name, type: type}).done(function (data) {
-                create_edit(data, name);
+                global_id = data;
+                <?php if ($_SESSION['usr_role'] == 'admin') {
+                echo "create_edit(data, name);";
+            } ?>
                 show_library(data);
                 if (type != "theme") {
                     show_slaves(data);
@@ -207,8 +282,15 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
             });
         }
 
+        function go_to(id, name, type) {
+            section_id(name, type);
+            var searchinput = document.getElementById("global-name");
+            searchinput.value = name;
+            var searchtype = document.getElementById("global-type");
+            searchtype.value = type;
+        }
+
         function create_edit(id, name) {
-            global_id = id;
             element = document.getElementById("edit-box");
             $(element).html("<hr/><h4>Изменение данных:</h4>" +
                 "<div class=\"col-sm-11\"><input type=\"text\" id=\"edit-name\" oninput=\"edit_section('" +
@@ -276,7 +358,7 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4 text-center">
-            <a href="/">Вернуться на главную</a>
+            <a href="structure_list.php">Вернуться к списку</a>
             <hr/>
         </div>
     </div>

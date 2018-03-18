@@ -156,6 +156,7 @@ if (isset($_POST['toStudent'])) {
             <a href="password.php" class="btn btn-primary btn-block">Сменить пароль</a>
             <a href="editTop.php" class="btn btn-primary btn-block">Сменить название</a>
             <a href="library" class="btn btn-primary btn-block">Библиотека</a>
+            <a href="structure_list.php" class="btn btn-primary btn-block">Структура</a>
         </div>
     </div>
 </div>

@@ -44,7 +44,24 @@ if (isset($id)) {
             if (strlen($row['authors'])) {
                 echo " ($row[authors])";
             }
-            echo " <a nohref style=\"cursor:pointer;color:blue;text-decoration:underline\" onclick='delete_book($id, $row[id])'>[открепить]</a>";
+            echo " <a nohref style=\"cursor:pointer;color:#CC0000\" onclick='delete_book($id, $row[id])'>[открепить]</a>";
+            echo " (точные страницы: ";
+            echo "<input type=\"text\" style=\"width: 40px\" id=\"start_page_";
+            echo $row['section_id'];
+            echo "\" oninput=\"start_page('";
+            echo $row['section_id'];
+            echo "');\" value='";
+            echo $row['start_page'];
+            echo "'>";
+            echo " – ";
+            echo "<input type=\"text\" style=\"width: 40px\" id=\"end_page_";
+            echo $row['section_id'];
+            echo "\" oninput=\"end_page('";
+            echo $row['section_id'];
+            echo "');\" value='";
+            echo $row['end_page'];
+            echo "'>";
+            echo ")";
         }
         echo "<br>";
     }
