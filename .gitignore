@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/deployment.xml
+.idea/diploma.iml
+.idea/inspectionProfiles/
+.idea/modules.xml
+.idea/workspace.xml
+html.zip
+html/MathJax/*
+html/excel/*

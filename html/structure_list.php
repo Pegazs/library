@@ -75,8 +75,8 @@ function line($prefix, $id)
             if ($found > 0) {
                 $number = 1;
                 while ($row = mysqli_fetch_array($result)) {
-                    $localPrefix = $number . ".";
-                    echo "<b>$localPrefix</b> <a href=/structure.php?id=$row[id]>$row[name]</a>";
+                    $localPrefix = "";
+                    echo "<b>Дисциплина:</b> <a href=/structure.php?id=$row[id]>$row[name]</a>";
                     echo "<br>";
                     line($localPrefix, $row['id']);
                     $number++;

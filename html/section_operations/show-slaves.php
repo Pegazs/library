@@ -76,8 +76,7 @@ if (isset($id)) {
                 <div class=\"col-sm-2\">
                     <select id=\"slave-type\" class=\"form-control\">";
         if ($type == "discipline") {
-            echo "<option value=\"discipline\">Дисциплина</option>
-                    <option value=\"section\">Раздел</option>";
+            echo "<option value=\"section\">Раздел</option>";
         }
         echo "<option value=\"theme\" selected>Тема</option>
                     </select>

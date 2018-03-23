@@ -540,7 +540,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id 
 
 <div id="popup1" style="display: none; width: 650px; height: 500px; overflow: auto">
     <div rel="title">
-        Превью вопроса
+        Предпросмотр
     </div>
     <div rel="body">
         <div style="padding: 10px; font-size: 11px; line-height: 150%;">
