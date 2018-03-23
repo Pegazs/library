@@ -1,6 +1,6 @@
 <?php
 include_once '../dbconnect.php';
-
+session_start();
 // Check connection
 if ($con === false) {
     die("ERROR: Could not connect. " . mysqli_connect_error());
@@ -44,29 +44,34 @@ if (isset($id)) {
             if (strlen($row['authors'])) {
                 echo " ($row[authors])";
             }
-            echo " <a nohref style=\"cursor:pointer;color:#CC0000\" onclick='delete_book($id, $row[id])'>[открепить]</a>";
-            echo " (точные страницы: ";
-            echo "<input type=\"text\" style=\"width: 40px\" id=\"start_page_";
-            echo $row['section_id'];
-            echo "\" oninput=\"start_page('";
-            echo $row['section_id'];
-            echo "');\" value='";
-            echo $row['start_page'];
-            echo "'>";
-            echo " – ";
-            echo "<input type=\"text\" style=\"width: 40px\" id=\"end_page_";
-            echo $row['section_id'];
-            echo "\" oninput=\"end_page('";
-            echo $row['section_id'];
-            echo "');\" value='";
-            echo $row['end_page'];
-            echo "'>";
-            echo ")";
+            if ($_SESSION['usr_role'] == 'teacher' OR $_SESSION['usr_role'] == 'admin') {
+                echo " <a nohref style=\"cursor:pointer;color:#CC0000\" onclick='delete_book($id, $row[id])'>[открепить]</a>";
+                echo " (точные страницы: ";
+                echo "<input type=\"text\" style=\"width: 40px\" id=\"start_page_";
+                echo $row['section_id'];
+                echo "\" oninput=\"start_page('";
+                echo $row['section_id'];
+                echo "');\" value='";
+                echo $row['start_page'];
+                echo "'>";
+                echo " – ";
+                echo "<input type=\"text\" style=\"width: 40px\" id=\"end_page_";
+                echo $row['section_id'];
+                echo "\" oninput=\"end_page('";
+                echo $row['section_id'];
+                echo "');\" value='";
+                echo $row['end_page'];
+                echo "'>";
+                echo ")";
+            }
         }
         echo "<br>";
+    } else if ($_SESSION['usr_role'] == 'student') {
+        echo "Книги по теме не заданы";
     }
-    echo "<b>Прикрепить книгу:</b><br>";
-    echo "<div class=\"row\">
+    if ($_SESSION['usr_role'] == 'teacher' OR $_SESSION['usr_role'] == 'admin') {
+        echo "<b>Прикрепить книгу:</b><br>";
+        echo "<div class=\"row\">
                 <div class=\"col-sm-12\">
                     <div class=\"search-box\" id=\"search-box-library\">
                         <input width=\"100%\" type=\"text\" id=\"library-name\" autocomplete=\"off\"
@@ -75,6 +80,7 @@ if (isset($id)) {
                     </div>
                 </div>
             </div>";
+    }
 }
 
 // close connection

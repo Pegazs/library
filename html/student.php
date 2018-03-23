@@ -73,7 +73,7 @@ if (isset($_POST['start'])) {
                         } ?></span>
                     <?php
                     //if (($result = mysqli_query($con, "SELECT * FROM workers WHERE worker_company = '".$_SESSION['usr_id']."'"))->num_rows != 0) {
-                    if (($result_select = mysqli_query($con, "SELECT * FROM tests WHERE archive!=1 AND mode = 'DEFAULT' AND (user_group IS NULL OR user_group = '" . $user_group . "') ORDER BY id DESC"))->num_rows > 0) {
+                    if (($result_select = mysqli_query($con, "SELECT * FROM tests WHERE mode = 'DEFAULT' AND archive!=1 AND mode = 'DEFAULT' AND (user_group IS NULL OR user_group = '" . $user_group . "') ORDER BY id DESC"))->num_rows > 0) {
                     ?>
                     <table class="table table-striped table-hover">
                         <thead>
@@ -106,6 +106,7 @@ if (isset($_POST['start'])) {
                 ?>Тесты не найдены.<?php } ?>
         </div>
         <div class="col-md-2">
+            <a href="/" class="btn btn-info btn-block">На главную</a>
             <a href="resultsUser.php" class="btn btn-primary btn-block">Результаты тестов</a>
             <a href="library" class="btn btn-primary btn-block">Библиотека</a>
             <a href="editUser.php" class="btn btn-primary btn-block">Ред. данные</a>

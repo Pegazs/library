@@ -54,7 +54,7 @@ if (isset($_POST['change'])) {
                     <div class='alert alert-info' role='alert'><i>Тесты в архиве не видны учащимся.</i></div>
                     <?php
                     //if (($result = mysqli_query($con, "SELECT * FROM workers WHERE worker_company = '".$_SESSION['usr_id']."'"))->num_rows != 0) {
-                    if (($result_select = mysqli_query($con, "SELECT * FROM tests WHERE archive=1 ORDER BY id DESC"))->num_rows > 0) {
+                    if (($result_select = mysqli_query($con, "SELECT * FROM tests WHERE mode = 'DEFAULT' AND archive=1 ORDER BY id DESC"))->num_rows > 0) {
                     ?>
                     <table class="table table-striped table-hover">
                         <thead>
@@ -90,6 +90,7 @@ if (isset($_POST['change'])) {
             </form>
         </div>
         <div class="col-md-2">
+            <a href="/" class="btn btn-info btn-block">На главную</a>
             <a href="teacher.php" class="btn btn-info btn-block">Выйти из архива</a>
             <a href="addTest.php" class="btn btn-success btn-block">Добавить тест</a>
             <a href="resultsTeacher.php" class="btn btn-primary btn-block">Результаты тестов</a>

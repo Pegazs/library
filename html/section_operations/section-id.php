@@ -1,6 +1,6 @@
 <?php
 include_once '../dbconnect.php';
-
+session_start();
 // Check connection
 if ($con === false) {
     die("ERROR: Could not connect. " . mysqli_connect_error());
@@ -34,6 +34,14 @@ if (isset($term) && isset($type)) {
             echo $row['name'];
             echo "|";
             echo $row['type'];
+            echo "|";
+            $sqlTest = "SELECT * FROM tests WHERE theme_id = '" . $id . "'";
+            $resultTest = mysqli_query($con, $sqlTest);
+            if (mysqli_num_rows($resultTest) > 0) {
+                $rowTest = mysqli_fetch_array($resultTest);
+                echo $rowTest['id'];
+            }
+            mysqli_free_result($resultTest);
             mysqli_free_result($result);
         }
     }

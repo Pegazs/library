@@ -85,7 +85,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
 
                         <div class="form-group">
                             <a name="preview-button" id="<?php echo $questions_list->id ?>"
-                               onclick="$('#popup1').w2popup()" class="btn btn-info">Превью</a>
+                               onclick="$('#popup1').w2popup()" class="btn btn-info">Предпросмотр</a>
                             <a name="oldquestion_delete"
                                onclick="oldquestion_delete('<?php echo $questions_list->id; ?>')"
                                class="btn btn-danger">Удалить</a>

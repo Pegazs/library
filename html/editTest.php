@@ -51,11 +51,6 @@ if (isset($_POST['savetest'])) {
     } else {
         $disable_show = 1;
     }
-    if (empty($_POST['training_mode'])) {
-        $mode = "DEFAULT";
-    } else {
-        $mode = "TRAINING";
-    }
     if (empty($_POST['archive_box'])) {
         $archive = 0;
     } else {
@@ -97,14 +92,14 @@ if (isset($_POST['savetest'])) {
         }
 
         if ($user_group == "NULL") {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', mode = '" . $mode . "', necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
-//                header("Location: questions.php?id=" . $test_id);
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
+                header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
             }
         } else {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', mode = '" . $mode . "',  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
-//                header("Location: questions.php?id=" . $test_id);
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "',  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
+                header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
             }
@@ -317,13 +312,6 @@ if (isset($_POST['savetest'])) {
                             echo 'checked';
                         } ?>/> Отправить тест в архив
                         <span class="text-danger"><?php if (isset($archive_box_error)) echo $archive_box_error; ?></span>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="checkbox" name="training_mode" <?php if ($mode == "TRAINING") {
-                            echo 'checked';
-                        } ?>/> Доступ к подсказкам
-                        <span class="text-danger"><?php if (isset($training_mode_error)) echo $training_mode_error; ?></span>
                     </div>
 
                     <div class="form-group">

@@ -12,18 +12,9 @@ else
 	{
 		header("Location: admin.php");
 	}
-	else
-	{
-		if($_SESSION['usr_role'] == 'teacher')
-		{
-	  		header("Location: teacher.php");
-	  	}
-	  	else
-	  	{
-	  		header("Location: student.php");
-	  	}
-
-	}
+	else {
+        header("Location: structure_list.php");
+    }
 }
 
 ?>
