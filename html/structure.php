@@ -131,11 +131,11 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
                     echo "create_edit(data, inputVal);";
                 } ?>
                     show_library(data);
-                    if (type != "theme") {
+                    if (type !== "theme") {
                         show_slaves(data);
                     } else {
                         var element = document.getElementById("slaves-box");
-                        $(element).html("");
+                        $(element).html("<br><a href=\"questionsTheme.php?id=" + data + "\" class=\"btn btn-success btn-block\">Редактировать вопросы</a>");
                     }
                 });
             }
@@ -223,11 +223,11 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
                 echo "create_edit(id, dataArray[0]);";
             } ?>
                 show_library(id);
-                if (dataArray[1] != "theme") {
+                if (dataArray[1] !== "theme") {
                     show_slaves(id);
                 } else {
                     var element = document.getElementById("slaves-box");
-                    $(element).html("");
+                    $(element).html("<br><a href=\"questionsTheme.php?id=" + id + "\" class=\"btn btn-success btn-block\">Редактировать вопросы</a>");
                 }
             });
         }
@@ -239,11 +239,11 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
                 echo "create_edit(data, name);";
             } ?>
                 show_library(data);
-                if (type != "theme") {
+                if (type !== "theme") {
                     show_slaves(data);
                 } else {
                     var element = document.getElementById("slaves-box");
-                    $(element).html("");
+                    $(element).html("<br><a href=\"questionsTheme.php?id=" + data + "\" class=\"btn btn-success btn-block\">Редактировать вопросы</a>");
                 }
             });
         }

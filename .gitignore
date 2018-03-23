@@ -7,3 +7,5 @@
 html.zip
 html/MathJax/*
 html/excel/*
+/html/library/dbconnectLib.php
+/html/dbconnect.php
