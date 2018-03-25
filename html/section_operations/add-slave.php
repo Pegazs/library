@@ -13,6 +13,8 @@ $slave_type = mysqli_real_escape_string($con, $_REQUEST['type']);
 if ($type == "Дисциплина") {
     $slave_type = "discipline";
 } else if ($type == "Раздел") {
+    $slave_type = "supersection";
+} else if ($type == "Подаздел") {
     $slave_type = "section";
 } else if ($type == "Тема") {
     $slave_type = "theme";

@@ -18,8 +18,10 @@ if (isset($id)) {
 
     if ($type == "discipline") {
         $typeNameRod = "дисциплины";
-    } else if ($type == "section") {
+    } else if ($type == "supersection") {
         $typeNameRod = "раздела";
+    } else if ($type == "section") {
+        $typeNameRod = "подраздела";
     } else if ($type == "theme") {
         $typeNameRod = "темы";
     }
@@ -40,9 +42,12 @@ if (isset($id)) {
             if ($row['type'] == "discipline") {
                 $typeName = "Дисциплина";
                 $typeNameRod = "дисциплины";
-            } else if ($row['type'] == "section") {
+            } else if ($row['type'] == "supersection") {
                 $typeName = "Раздел";
                 $typeNameRod = "раздела";
+            } else if ($row['type'] == "section") {
+                $typeName = "Подраздел";
+                $typeNameRod = "подраздела";
             } else if ($row['type'] == "theme") {
                 $typeName = "Тема";
                 $typeNameRod = "темы";
@@ -76,7 +81,10 @@ if (isset($id)) {
                 <div class=\"col-sm-2\">
                     <select id=\"slave-type\" class=\"form-control\">";
         if ($type == "discipline") {
-            echo "<option value=\"section\">Раздел</option>";
+            echo "<option value=\"supersection\">Раздел</option>";
+        }
+        if ($type == "discipline" || $type == "supersection") {
+            echo "<option value=\"section\">Подраздел</option>";
         }
         echo "<option value=\"theme\" selected>Тема</option>
                     </select>

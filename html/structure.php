@@ -369,7 +369,8 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
                 <div class="col-sm-2">
                     <select id="global-type" class="form-control">
                         <option value="discipline" selected>Дисциплина</option>
-                        <option value="section">Раздел</option>
+                        <option value="supersection">Раздел</option>
+                        <option value="section">Подраздел</option>
                         <option value="theme">Тема</option>
                     </select>
                 </div>
