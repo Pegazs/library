@@ -38,6 +38,12 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
             ?>
         });
 
+        function create_session(test_id) {
+            $.get("section_operations/create-session.php", {id: test_id}).done(function (data) {
+                window.location.replace('test.php?id=' + data);
+            });
+        }
+
         function section_url(id) {
             $.get("section_operations/section-id.php", {id: id}).done(function (data) {
                 var dataArray = data.split("|");
@@ -47,7 +53,7 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
                     $(element).html("<br>В текущей версии доступны курсы только по темам")
                 } else {
                     if (dataArray[2].length > 0) {
-                        $(element).html("<br><a href=\"test.php?id=" + dataArray[2] + "\" class=\"btn btn-success btn-block\">Пройти курс</a>");
+                        $(element).html("<br><a onclick=\"create_session('" + dataArray[2] + "');\" class=\"btn btn-success btn-block\">Пройти курс</a>");
                     } else {
                         $(element).html("<br>Курс по выбранной теме отсутствует")
                     }
