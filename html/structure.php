@@ -197,7 +197,8 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
         function start_page(id) {
             var value = document.getElementById("start_page_"+id).value;
             $.get("section_operations/set-page.php", {
-                section_id: id,
+                section_id: global_id,
+                book_id: id,
                 page: value,
                 start_end: "start"
             }).done(function (data) {
@@ -208,7 +209,8 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
         function end_page(id) {
             var value = document.getElementById("end_page_"+id).value;
             $.get("section_operations/set-page.php", {
-                section_id: id,
+                section_id: global_id,
+                book_id: id,
                 page: value,
                 start_end: "end"
             }).done(function (data) {
