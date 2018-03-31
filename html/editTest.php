@@ -71,26 +71,6 @@ if (isset($_POST['savetest'])) {
         $timer_error = "Это поле должно содержать целое положительное число или быть пустым";
     }
     if (!$error) {
-
-        if ($theme_name != "") {
-            $theme_id = null;
-            $sql = "SELECT * FROM sections WHERE type = 'theme' AND name = '" . $theme_name . "'";
-            if ($result = mysqli_query($con, $sql)) {
-                if (mysqli_num_rows($result) > 0) {
-                    $rowTheme = mysqli_fetch_array($result);
-                    $theme_id = $rowTheme['id'];
-                } else {
-                    mysqli_query($con, "INSERT INTO sections(name,type) VALUES('" . $theme_name . "','theme')");
-                    $theme_id = mysqli_insert_id($con);
-                }
-                // Close result set
-                mysqli_free_result($result);
-                mysqli_query($con, "UPDATE tests SET test_id = '" . $theme_id . "'  WHERE id = '" . $test_id . "'");
-            }
-        } else {
-            mysqli_query($con, "UPDATE tests SET test_id = NULL WHERE id = '" . $test_id . "'");
-        }
-
         if ($user_group == "NULL") {
             if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
                 header("Location: questions.php?id=" . $test_id);
@@ -245,17 +225,6 @@ if (isset($_POST['savetest'])) {
                         <span class="text-danger"><?php if (isset($test_name_error)) echo $test_name_error; ?></span>
                         <input type="hidden" value="<?php echo $test_id ?>" name="id" readonly="readonly" required
                                value="<?php if ($error) echo $test_id; ?>" class="form-control"/>
-                    </div>
-
-                    <div class="form-group" id="search-box-global">
-                        <label for="name">Тема</label>
-                        <div class="search-box">
-                            <input name="test_theme" type="text" id="global-name" autocomplete="off"
-                                   value="<?php echo $theme_name; ?>" class="form-control"
-                                   placeholder="Укажите тему (опционально)"/>
-                            <div class="result" id="result-global"></div>
-                        </div>
-                        <span class="text-danger"><?php if (isset($test_theme_error)) echo $test_theme_error; ?></span>
                     </div>
 
                     <div class="form-group">

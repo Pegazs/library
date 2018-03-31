@@ -39,7 +39,10 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
         });
 
         function create_session(id, type) {
-            $.get("section_operations/create-session.php", {id: id, type: type}).done(function (data) {
+            $.get("section_operations/create-session.php", {
+                id: id,
+                type: type
+            }).done(function (data) {
                 window.location.replace('test.php?id=' + data);
             });
         }
