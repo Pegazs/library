@@ -63,7 +63,7 @@ if (isset($id)) {
             } else {
                 echo "&nbsp;&nbsp;&nbsp;";
             }
-            echo "<b>$typeName:</b> <a nohref style=\"cursor:pointer;color:#6699CC\" onclick=\"go_to($row[id_slave], ";
+            echo "<b>$typeName:</b> <a nohref style=\"cursor:pointer;color:#3B33CC\" onclick=\"go_to($row[id_slave], ";
             echo "'";
             echo $row['name'];
             echo "', '" ;

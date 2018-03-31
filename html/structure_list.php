@@ -17,8 +17,14 @@ function line_admin($prefix, $id)
         $number = 1;
         while ($row = mysqli_fetch_array($result)) {
             $localPrefix = $prefix . $number . ".";
-            echo "<b>$localPrefix</b> <a href=/structure.php?id=$row[id]>$row[name]</a>";
-            echo "<br>";
+            if ($row['type'] == "supersection") {
+                echo "<h3><b>$localPrefix</b> <a href=/structure.php?id=$row[id]>$row[name]</a></h3>";
+            } else if ($row['type'] == "section") {
+                echo "<h4><b>$localPrefix</b> <a href=/structure.php?id=$row[id]>$row[name]</a></h4>";
+            } else {
+                echo "<b>$localPrefix</b> <a href=/structure.php?id=$row[id]>$row[name]</a>";
+                echo "<br>";
+            }
             line_admin($localPrefix, $row['id']);
             $number++;
         }
@@ -36,8 +42,14 @@ function line_user($prefix, $id)
         $number = 1;
         while ($row = mysqli_fetch_array($result)) {
             $localPrefix = $prefix . $number . ".";
-            echo "<b>$localPrefix</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a>";
-            echo "<br>";
+            if ($row['type'] == "supersection") {
+                echo "<h3><b>$localPrefix</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a></h3>";
+            } else if ($row['type'] == "section") {
+                echo "<h4><b>$localPrefix</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a></h4>";
+            } else {
+                echo "<b>$localPrefix</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a>";
+                echo "<br>";
+            }
             line_user($localPrefix, $row['id']);
             $number++;
         }
@@ -97,12 +109,10 @@ function line_user($prefix, $id)
                     $localPrefix = "";
 
                     if (($_SESSION['usr_role'] != 'teacher' and $_SESSION['usr_role'] != 'admin')) {
-                        echo "<b>Дисциплина:</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a>";
-                        echo "<br>";
+                        echo "<h2><b>Дисциплина:</b> <a href=/sectionInfo.php?id=$row[id]>$row[name]</a></h2>";
                         line_user($localPrefix, $row['id']);
                     } else {
-                        echo "<b>Дисциплина:</b> <a href=/structure.php?id=$row[id]>$row[name]</a>";
-                        echo "<br>";
+                        echo "<h2><b>Дисциплина:</b> <a href=/structure.php?id=$row[id]>$row[name]</a></h2>";
                         line_admin($localPrefix, $row['id']);
                     }
                     $number++;
@@ -128,7 +138,6 @@ function line_user($prefix, $id)
                 <a href="teacher.php" class="btn btn-info btn-block">Тесты</a>
                 <a href="groups.php" class="btn btn-primary btn-block">Группы</a>
                 <a href="library" class="btn btn-primary btn-block">Библиотека</a>
-                <a href="structure_list.php" class="btn btn-primary btn-block">Структура</a>
                 <a href="editUser.php" class="btn btn-primary btn-block">Ред. данные</a>
                 <a href="password.php" class="btn btn-primary btn-block">Сменить пароль</a>
                 <?php

@@ -201,7 +201,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-9">
-                                    <input type="text" id="<?php echo $answer_object->id ?>answer_text_new"
+                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
                                            name="answer_text_new" placeholder="Введите текст ответа"
                                            class="form-control form-control-success"/>
                                 </div>
@@ -336,6 +336,19 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                class="btn btn-sm btn-success">Добавить</a>
                         </div>
                     </fieldset>
+
+
+                    <hr/>
+                    <b>Подтема:</b>
+                    <fieldset>
+                        <hr/>
+                        <div class="col-sm-12 ">
+                            <input type="text" id="<?php echo $questions_list->id ?>subtheme" name="subtheme"
+                                   oninput="editsubtheme('<?php echo $questions_list->id; ?>')"
+                                   placeholder="Укажите подтему"
+                                   value="<?php echo $questions_list->subtheme; ?>"
+                                   class="form-control form-control-success"/>
+                        </div>
                 </td>
             </tr>
         </table>
