@@ -118,9 +118,31 @@ $error_msg = "";
 
                         <?php
                         if ($test_info->mode == "TRAINING") {
+                            mysqli_query($con, "SET sql_mode = ''");
+                            $query = "SELECT sum(qs.correct)/count(qs.question_id) as result, q.subtheme, s2.name, s2.type FROM questions q JOIN questions_session qs ON qs.question_id = q.id JOIN sessions s ON qs.session_id = s.id JOIN tests t ON q.test_id = t.id JOIN sections s2 ON t.theme_id = s2.id WHERE s.test_id = " . $test_info->id . " AND user_id = " . $user_info->id . " group by q.subtheme";
+                            $result = mysqli_query($con, $query);
                             ?>
                             <hr>
-                            <b>Рекомендации:</b>
+                            <b>Рекомендации:</b><br>
+                            <?php
+                            $bad_counter = 0;
+                            while ($row = mysqli_fetch_array($result)) {
+                                if ($row['result'] < 0.75) {
+                                    $bad_counter++;
+                                    echo "• ";
+                                    if ($row['subtheme'] == "") {
+                                        echo "Дополнительно изучить данную тему в целом";
+                                        echo "<br>";
+                                    } else {
+                                        echo "Дополнительно изучить подтему «" . $row['subtheme'] . "»";
+                                        echo "<br>";
+                                    }
+                                }
+                            }
+                            if ($bad_counter == 0) {
+                                echo "• Тема усвоена, можно переходить к следующей";
+                            }
+                            ?>
                             <hr>
                         <?php } ?>
 
