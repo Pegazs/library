@@ -143,7 +143,6 @@ $error_msg = "";
                                 echo "• Тема усвоена, можно переходить к следующей";
                             }
                             ?>
-                            <hr>
                         <?php } ?>
 
                         <?php while ($questions = mysqli_fetch_object($result_select)) {
