@@ -8,6 +8,8 @@ if (empty($_SESSION['usr_id']) or ($_SESSION['usr_role'] != 'teacher' and $_SESS
 
 if (!empty($_GET['id']) && isset($_GET['id'])) {
     $section_id = mysqli_real_escape_string($con, $_GET['id']);
+} else {
+    $section_id=0;
 }
 
 ?>
@@ -84,22 +86,10 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
     </style>
 
     <script type="text/javascript">
+        var global_id;
         $(document).ready(function () {
-
-            var global_id;
             $("#global-name").on("keyup input", function () {
-                /* Get input value on change */
-                var inputVal = $(this).val();
-                var type = document.getElementById("global-type").value;
-                var resultDropdown = $(this).siblings(".result");
-                if (inputVal.length) {
-                    $.get("section_operations/section-search.php", {term: inputVal, type: type}).done(function (data) {
-                        // Display the returned data in browser
-                        resultDropdown.html(data);
-                    });
-                } else {
-                    resultDropdown.empty();
-                }
+                refresh_search();
             });
 
             // Set search input value on click of result item
@@ -330,6 +320,21 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
             });
         }
 
+        function refresh_search() {
+            /* Get input value on change */
+            var inputVal = $("#global-name").val();
+            var type = document.getElementById("global-type").value;
+            var resultDropdown = $("#global-name").siblings(".result");
+            if (inputVal.length) {
+                $.get("section_operations/section-search.php", {term: inputVal, type: type}).done(function (data) {
+                    // Display the returned data in browser
+                    resultDropdown.html(data);
+                });
+            } else {
+                resultDropdown.empty();
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -369,7 +374,7 @@ if (!empty($_GET['id']) && isset($_GET['id'])) {
             <legend>Редактирование структуры разделов</legend>
             <div class="row">
                 <div class="col-sm-2">
-                    <select id="global-type" class="form-control">
+                    <select id="global-type" class="form-control" onchange="refresh_search();">
                         <option value="discipline" selected>Дисциплина</option>
                         <option value="supersection">Раздел</option>
                         <option value="section">Подраздел</option>

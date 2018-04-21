@@ -79,7 +79,7 @@ if (isset($id)) {
         echo "<b>Добавить зависимость:</b><br>";
         echo "<div class=\"row\">
                 <div class=\"col-sm-2\">
-                    <select id=\"slave-type\" class=\"form-control\">";
+                    <select id=\"slave-type\"  onchange=\"refresh_search_slave();\" class=\"form-control\">";
         if ($type == "discipline") {
             echo "<option value=\"supersection\">Раздел</option>";
         }
@@ -108,18 +108,7 @@ mysqli_close($con);
     $(document).ready(function () {
 
         $("#slave-name").on("keyup input", function () {
-            /* Get input value on change */
-            var inputVal = $(this).val();
-            var type = document.getElementById("slave-type").value;
-            var resultDropdown = $(this).siblings(".result");
-            if (inputVal.length) {
-                $.get("section_operations/slave-search.php", {term: inputVal, type: type}).done(function (data) {
-                    // Display the returned data in browser
-                    resultDropdown.html(data);
-                });
-            } else {
-                resultDropdown.empty();
-            }
+            refresh_search_slave();
         });
 
         // Set search input value on click of result item
@@ -129,5 +118,20 @@ mysqli_close($con);
             $(this).parent(".result").empty();
         });
     });
+
+    function refresh_search_slave() {
+        /* Get input value on change */
+        var inputVal = $("#slave-name").val();
+        var type = document.getElementById("slave-type").value;
+        var resultDropdown = $("#slave-name").siblings(".result");
+        if (inputVal.length) {
+            $.get("section_operations/slave-search.php", {term: inputVal, type: type}).done(function (data) {
+                // Display the returned data in browser
+                resultDropdown.html(data);
+            });
+        } else {
+            resultDropdown.empty();
+        }
+    }
 
 </script>

@@ -30,6 +30,11 @@ if (isset($section_id) && isset($slave_name) && isset($slave_type)) {
             $slave_id = $row['id'];
             if ($section_id != $slave_id) {
                 $slave_number = mysqli_num_rows($result_sum)+1;
+
+                if ($slave_type = "section") {
+                    mysqli_query($con, "DELETE FROM sections_hierarchy WHERE id_slave='" . $slave_id . "' AND (id_master='" . $section_id . "' OR id_master IN (SELECT id_master from (SELECT * from sections_hierarchy) b where id_slave='" . $section_id . "') OR id_master IN (SELECT id_slave from (SELECT * from sections_hierarchy) b where id_master='" . $section_id . "'))");
+                }
+
                 mysqli_query($con, "INSERT INTO sections_hierarchy(id_master,id_slave,slave_number) VALUES('" . $section_id . "','" . $slave_id . "','" . $slave_number . "')");
             }
             mysqli_free_result($result);

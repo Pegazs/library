@@ -23,7 +23,7 @@ if (isset($term)) {
             // Close result set
             mysqli_free_result($result);
         } else {
-            echo "<a onclick='new_section()'>Добавить новую запись</a>";
+            echo "<p style = 'color:#006600;' onclick='new_section()'>Добавить новую запись</p>";
         }
     } else {
         echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);

@@ -19,9 +19,12 @@ if (isset($id)) {
     if ($type == "discipline") {
         $typeName = "дисциплина";
         $typeNameRod = "дисциплины";
-    } else if ($type == "section") {
+    } else if ($type == "supersection") {
         $typeName = "раздел";
         $typeNameRod = "раздела";
+    } else if ($type == "section") {
+        $typeName = "подраздел";
+        $typeNameRod = "подраздела";
     } else if ($type == "theme") {
         $typeName = "тема";
         $typeNameRod = "темы";

@@ -24,7 +24,7 @@ if (isset($term)) {
             mysqli_free_result($result);
             $sql_exactly = "SELECT * FROM sections WHERE type = '" . $type . "' AND name = '" . $term . "'";
             if (!mysqli_num_rows(mysqli_query($con, $sql_exactly))) {
-                echo "<p onclick='new_slave()'>Добавить новую запись</p>";
+                echo "<p style = 'color:#006600;' onclick='new_slave()'>Добавить новую запись</p>";
             }
         } else {
             echo "<p style = 'color:#006600;' onclick='new_slave()'>Добавить новую запись</p>";
