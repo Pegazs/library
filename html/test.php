@@ -468,7 +468,7 @@ if (mysqli_num_rows($isFinished) == 0) {
                 remain_bv = remain_bv - 1;
                 parseTime_bv(remain_bv);
                 if (remain_bv <= 0) {
-                    window.location = "http://testing.local/test.php?id=<?php echo $session_id ?>";
+                    window.location = "test.php?id=<?php echo $session_id ?>";
                 }
             }, 1000);
 

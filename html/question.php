@@ -5,11 +5,11 @@ include_once 'dbconnect.php';
 if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
     header("Location: index.php");
 }
-
+$site_address = mysqli_fetch_object(mysqli_query($con, "SELECT settings_value FROM settings WHERE settings_name ='site_address'"))->settings_value;
 $question_id = mysqli_real_escape_string($con, $_POST["question_id"]);
 
 ?>
-<script type="text/javascript">
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     $(document).ready(function () {
         $('a[name="preview-button"]').click(function () {
 
@@ -121,7 +121,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                                    oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                    placeholder="Введите текст ответа"
                                                    value="<?php echo $answer_object->answer_text; ?>"
-                                                   class="form-control form-control-success"/>
+                                                   class="form-control form-control-success"/></textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-3 input-group">
@@ -144,9 +144,9 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-9">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
                                            name="answer_text_new" placeholder="Введите текст ответа"
-                                           class="form-control form-control-success"/>
+                                           class="form-control form-control-success"/></textarea>
                                 </div>
 
                                 <div class="col-sm-3 input-group">
@@ -174,12 +174,12 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                                 <span class="input-group-addon success"><span
                                                             class="glyphicon glyphicon-ok"></span></span>
                                             <?php } ?>
-                                            <input type="text" id="<?php echo $answer_object->id ?>answer_text"
+                                            <textarea rows="1" <textarea rows="1" id="<?php echo $answer_object->id ?>answer_text"
                                                    name="answer_text"
                                                    oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                    placeholder="Введите текст ответа"
                                                    value="<?php echo $answer_object->answer_text; ?>"
-                                                   class="form-control form-control-success"/>
+                                                   class="form-control form-control-success"/></textarea>
                                         </div>
                                     </div>
 
@@ -201,9 +201,9 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-9">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
                                            name="answer_text_new" placeholder="Введите текст ответа"
-                                           class="form-control form-control-success"/>
+                                           class="form-control form-control-success"/></textarea>
                                 </div>
 
                                 <div class="col-sm-3 input-group">
@@ -223,11 +223,11 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-12">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
                                            name="answer_text_new" placeholder="Введите текст ответа"
                                            oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                            value="<?php echo $input_answer->answer_text; ?>"
-                                           class="form-control form-control-success"/>
+                                           class="form-control form-control-success"/></textarea>
                                 </div>
                             </fieldset>
                             <?php
@@ -241,21 +241,21 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                 <fieldset>
                                     <hr/>
                                     <div class="col-sm-5">
-                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text"
+                                        <textarea rows="1" id="<?php echo $answer_object->id ?>answer_text"
                                                name="answer_text"
                                                oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                placeholder="Введите текст ответа"
                                                required value="<?php echo $answer_object->answer_text; ?>"
-                                               class="form-control form-control-success"/>
+                                               class="form-control form-control-success"/></textarea>
                                     </div>
 
                                     <div class="col-sm-5">
-                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text2"
+                                        <textarea rows="1" id="<?php echo $answer_object->id ?>answer_text2"
                                                name="answer_text2"
                                                oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                placeholder="Введите текст соответствия"
                                                required value="<?php echo $answer_object->answer_text2; ?>"
-                                               class="form-control form-control-success"/>
+                                               class="form-control form-control-success"/></textarea>
                                     </div>
                                     <div class="col-sm-2 input-group">
                                         <?php if ($result_select_answer->num_rows > 1) { ?>
@@ -272,16 +272,16 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-5">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
                                            name="answer_text_new" placeholder="Введите текст ответа"
-                                           class="form-control form-control-success"/>
+                                           class="form-control form-control-success"/></textarea>
                                 </div>
 
                                 <div class="col-sm-5">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text2_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text2_new"
                                            name="answer_text2_new"
                                            placeholder="Введите текст соответствия"
-                                           required class="form-control form-control-success"/>
+                                           required class="form-control form-control-success"/></textarea>
                                 </div>
                                 <div class="col-sm-2 input-group">
                                     <a name="addanswer"
@@ -307,11 +307,11 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                         <fieldset>
                             <hr/>
                             <div class="col-sm-10 ">
-                                <input type="text" id="<?php echo $tip_object->id ?>tip_text" name="tip_text"
+                                <textarea rows="1" id="<?php echo $tip_object->id ?>tip_text" name="tip_text"
                                        oninput="edittip('<?php echo $questions_list->id; ?>', '<?php echo $tip_object->id; ?>')"
                                        placeholder="Введите текст подсказки"
                                        value="<?php echo $tip_object->tip_text; ?>"
-                                       class="form-control form-control-success"/>
+                                       class="form-control form-control-success"/></textarea>
                             </div>
                             <div class="col-sm-2 input-group">
                                 <a name="deletetip"
@@ -326,9 +326,9 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                     <fieldset>
                         <hr/>
                         <div class="col-sm-10">
-                            <input type="text" id="<?php echo $questions_list->id ?>tip_text_new" name="tip_text_new"
+                            <textarea rows="1" id="<?php echo $questions_list->id ?>tip_text_new" name="tip_text_new"
                                    placeholder="Введите текст подсказки"
-                                   class="form-control form-control-success"/>
+                                   class="form-control form-control-success"/></textarea>
                         </div>
 
                         <div class="col-sm-2 input-group">
@@ -343,11 +343,11 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                     <fieldset>
                         <hr/>
                         <div class="col-sm-12 ">
-                            <input type="text" id="<?php echo $questions_list->id ?>subtheme" name="subtheme"
+                            <textarea rows="1" id="<?php echo $questions_list->id ?>subtheme" name="subtheme"
                                    oninput="editsubtheme('<?php echo $questions_list->id; ?>')"
                                    placeholder="Укажите подтему"
                                    value="<?php echo $questions_list->subtheme; ?>"
-                                   class="form-control form-control-success"/>
+                                   class="form-control form-control-success"/></textarea>
                         </div>
                 </td>
             </tr>

@@ -6,6 +6,8 @@ if (empty($_SESSION['usr_id']) or $_SESSION['usr_role'] != 'teacher') {
     header("Location: index.php");
 }
 
+$site_address = mysqli_fetch_object(mysqli_query($con, "SELECT settings_value FROM settings WHERE settings_name ='site_address'"))->settings_value;
+
 //получаем id из адресной строки
 if (!empty($_GET['id']) && isset($_GET['id'])) {
     $test_id = mysqli_real_escape_string($con, $_GET['id']);
@@ -221,35 +223,7 @@ if (isset($_POST['newquestion'])) {
             border-color: rgb(212, 63, 58);
         }
     </style>
-
     <script type="text/javascript">
-        $(document).ready(function () {
-            var x = document.getElementsByName("test_question");
-            var i;
-            for (i = 0; i < x.length; i++) {
-                question(x[i].id)
-            }
-            $('a[name="preview-button"]').click(function () {
-
-                var question_id = this.id;
-
-                if (question_id != "") {
-                    $("#preview").html("<img src='library/ajax-loader.gif'/>");
-                    $.ajax({
-                        type: "post",
-                        url: "preview.php",
-                        "data": {
-                            "question_id": question_id
-                        },
-                        success: function (data) {
-                            $("#preview").html(data);
-                            MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'preview']);
-                        }
-                    });
-                }
-            });
-        });
-
 
         function question(id) {
 
@@ -397,7 +371,39 @@ if (isset($_POST['newquestion'])) {
             });
         }
 
+        $(document).ready(function () {
+            var x = document.getElementsByName("test_question");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                question(x[i].id)
+            }
+            $('a[name="preview-button"]').click(function () {
+
+                var question_id = this.id;
+
+                if (question_id != "") {
+                    $("#preview").html("<img src='library/ajax-loader.gif'/>");
+                    $.ajax({
+                        type: "post",
+                        url: "preview.php",
+                        "data": {
+                            "question_id": question_id
+                        },
+                        success: function (data) {
+                            $("#preview").html(data);
+                            MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'preview']);
+                        }
+                    });
+                }
+            });
+
+
+            $('head').append("<script async src=\"//e-tutor.ru/images/sdk/pup.js\"></sc" + "ript>");
+        });
+
     </script>
+<!--    <script async src="//e-tutor.ru/images/sdk/pup.js" data-url="//e-tutor.ru/images/upload" data-auto-insert="html-embed" data-palette="yellow"></script>-->
+    <!--    <script async src=--><?php //echo "\"//" . $site_address . "/images/sdk/pup.js\"" ?><!-- data-url=--><?php //echo "\"https://" . $site_address . "/images/upload\"" ?><!-- data-auto-insert="html-embed"></script>-->
 </head>
 <body>
 
@@ -539,6 +545,8 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id 
     </div>
 </div>
 
+
+<div id="test"></div>
 <link rel="stylesheet" type="text/css" href="../css/w2ui-1.5.rc1.min.css"/>
 <script type="text/javascript" src="../js/w2ui-1.5.rc1.min.js"></script>
 
