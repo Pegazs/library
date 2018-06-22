@@ -36,7 +36,7 @@ if (isset($id)) {
     echo $name;
     echo "» из <a href='/library/books.php' target='_blank'>библиотеки</a>:</h4>";
 
-    $query = "SELECT * FROM sections_books, books WHERE section_id = " . $id . " AND book_id = id";
+    $query = "SELECT * FROM sections_books s, books b WHERE s.section_id = " . $id . " AND s.book_id = b.id ORDER BY b.name";
     $result = mysqli_query($con, $query);
     $found = mysqli_num_rows($result);
 

@@ -111,7 +111,8 @@ if(empty($_SESSION['usr_id'])) {
                                         <div class="form-group">
                                             <label for="filter">Выводить в результатах</label>
                                             <select id="filter" class="form-control">
-                                                <option value="index-simple" selected>Поиск по предметному указателю</option>
+                                                <option value="combined" selected>Комбинированый поиск</option>
+                                                <option value="index-simple">Поиск по предметному указателю</option>
 <!--                                                <option value="index-double-check">Поиск по предметному указателю И наличию на странице</option>-->
                                                 <option value="best-one">Только лучшее совпадение для каждой книги</option>
                                                 <option value="all">Все страницы</option>

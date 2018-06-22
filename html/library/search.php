@@ -29,6 +29,8 @@ $filter = $_POST["filter"];
 
 $keywords = mysqli_real_escape_string($conLib, $keywords);
 
+$keywords = str_replace('-', ' ', $keywords); //TODO: "-word" case fix
+
 
 switch ($filter) {
     case "all":
@@ -38,7 +40,20 @@ switch ($filter) {
         $query = "SELECT DISTINCT pages.*, books.* FROM pages, books, books_index WHERE books_index.book_id=books.id AND books.id=pages.book_id AND MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) AND books.id IN (71, 72, 88, 73, 89, 86, 87) AND pages.page_number IN (SELECT books_index.page_number FROM books_index WHERE books_index.book_id=books.id AND MATCH(books_index.text) AGAINST ('$keywords' IN BOOLEAN MODE))";
         break;
     case "index-simple":
+        $keywords = str_replace('[^0-9a-zA-Z_\s]', '', $keywords);
+        $keywords = trim($keywords);
+        $keywords = str_replace('~ +~', ' ', $keywords);
+        $keywords = str_replace(' ', ' +', $keywords);
+        $keywords = "+" . $keywords;
         $query = "SELECT DISTINCT pages.*, books.* FROM pages, books, books_index WHERE books_index.book_id=books.id AND books.id=pages.book_id AND books.id IN (71, 72, 88, 73, 89, 86, 87) AND pages.page_number IN (SELECT books_index.page_number FROM books_index WHERE books_index.book_id=books.id AND MATCH(books_index.text) AGAINST ('$keywords' IN BOOLEAN MODE))";
+        break;
+    case "combined":
+        $keywordsIndex = str_replace('[^0-9a-zA-Z_\s]', '', $keywords);
+        $keywordsIndex = trim($keywordsIndex);
+        $keywordsIndex = str_replace('~ +~', ' ', $keywordsIndex);
+        $keywordsIndex = str_replace(' ', ' +', $keywordsIndex);
+        $keywordsIndex = "+" . $keywordsIndex;
+        $query = "SELECT DISTINCT pages.*, books.* FROM pages, books, books_index WHERE books_index.book_id=books.id AND books.id=pages.book_id AND books.id IN (71, 72, 88, 73, 89, 86, 87) AND pages.page_number IN (SELECT books_index.page_number FROM books_index WHERE books_index.book_id=books.id AND MATCH(books_index.text) AGAINST ('$keywordsIndex' IN BOOLEAN MODE))";
         break;
     case "best-one":
     default:
@@ -49,19 +64,48 @@ switch ($filter) {
 //$query = "SELECT *, FROM pages, books WHERE books.id=pages.book_id AND MATCH(text) AGAINST ('$keywords' IN BOOLEAN MODE)";
 mysqli_query($conLib, "SET sql_mode = ''");
 $result = mysqli_query($conLib, $query);
-$found = mysqli_num_rows($result);
 
-if ($found > 0) {
-    while ($row = mysqli_fetch_array($result)) {
-        $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
-        echo "<li class='link'><a target='_blank' href=/library/books/$entryRu#page=$row[page_number]>$row[name]</a>";
-        if (strlen($row['authors'])) {
-            echo "  ($row[authors])";
+if ($result) {
+
+//    echo $keywords . "     ";
+
+    $found = mysqli_num_rows($result);
+
+    if ($found > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
+            echo "<li class='link'><a target='_blank' href=/library/books/$entryRu#page=$row[page_number]>$row[name]</a>";
+            if (strlen($row['authors'])) {
+                echo "  ($row[authors])";
+            }
+            echo ", страница $row[page_number]</li>";
         }
-        echo ", страница $row[page_number]</li>";
+    } else {
+        if ($filter == "combined") {
+            $resultAlt = mysqli_query($conLib, "SELECT * FROM books, (SELECT *, max(score) FROM (SELECT *, MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) score FROM pages WHERE MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE)) AS dataScore group by book_id) as dataFull WHERE books.id=book_id AND books.id IN (71, 72, 88, 73, 89, 86, 87) ORDER BY score desc");
+            if ($resultAlt) {
+                $foundAlt = mysqli_num_rows($resultAlt);
+                if ($foundAlt > 0) {
+                    while ($row = mysqli_fetch_array($resultAlt)) {
+                        $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
+                        echo "<li class='link'><a target='_blank' href=/library/books/$entryRu#page=$row[page_number]>$row[name]</a>";
+                        if (strlen($row['authors'])) {
+                            echo "  ($row[authors])";
+                        }
+                        echo ", страница $row[page_number]</li>";
+                    }
+                } else {
+                    echo "<li>Соответствий не найдено</li>";
+                }
+            } else {
+                echo "<li>Ошибка при обработке запроса</li>";
+            }
+        } else {
+            echo "<li>Соответствий не найдено</li>";
+        }
     }
 } else {
-    echo "<li>Соответствий не найдено</li>";
+    echo "<li>Ошибка при обработке запроса</li>";
 }
 // ajax search
 ?>
