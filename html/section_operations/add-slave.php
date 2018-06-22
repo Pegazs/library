@@ -24,18 +24,23 @@ if (isset($section_id) && isset($slave_name) && isset($slave_type)) {
 
     $sql = "SELECT * FROM sections WHERE name = '" . $slave_name . "' AND type = '" . $slave_type . "'";
     $sql_sum = "SELECT * FROM sections_hierarchy WHERE id_master = " . $section_id;
-    if (($result = mysqli_query($con, $sql)) && ($result_sum = mysqli_query($con, $sql_sum))) {
+    if (($result = mysqli_query($con, $sql))) {
         if (mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_array($result);
             $slave_id = $row['id'];
             if ($section_id != $slave_id) {
-                $slave_number = mysqli_num_rows($result_sum)+1;
+                $sql_master_slave = "SELECT * FROM sections_hierarchy WHERE id_master = " . $section_id . " AND id_slave = " . $slave_id;
+                $result_slave = mysqli_query($con, $sql_master_slave);
+                if (mysqli_num_rows($result_slave) == 0) {
+                    if ($slave_type == "section") {
+                        mysqli_query($con, "DELETE FROM sections_hierarchy WHERE id_slave='" . $slave_id . "' AND (id_master='" . $section_id . "' OR id_master IN (SELECT id_master from (SELECT * from sections_hierarchy) b where id_slave='" . $section_id . "') OR id_master IN (SELECT id_slave from (SELECT * from sections_hierarchy) b where id_master='" . $section_id . "'))");
+                    }
 
-                if ($slave_type = "section") {
-                    mysqli_query($con, "DELETE FROM sections_hierarchy WHERE id_slave='" . $slave_id . "' AND (id_master='" . $section_id . "' OR id_master IN (SELECT id_master from (SELECT * from sections_hierarchy) b where id_slave='" . $section_id . "') OR id_master IN (SELECT id_slave from (SELECT * from sections_hierarchy) b where id_master='" . $section_id . "'))");
+                    if ($result_sum = mysqli_query($con, $sql_sum)) {
+                        $slave_number = 1 + mysqli_num_rows($result_sum);
+                        mysqli_query($con, "INSERT INTO sections_hierarchy(id_master,id_slave,slave_number) VALUES('" . $section_id . "','" . $slave_id . "','" . $slave_number . "')");
+                    }
                 }
-
-                mysqli_query($con, "INSERT INTO sections_hierarchy(id_master,id_slave,slave_number) VALUES('" . $section_id . "','" . $slave_id . "','" . $slave_number . "')");
             }
             mysqli_free_result($result);
         }

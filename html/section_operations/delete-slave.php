@@ -13,7 +13,7 @@ $sql_sum = "SELECT * FROM sections_hierarchy WHERE id_master = " . $master_id . 
 $result_sum = mysqli_query($con, $sql_sum);
 $row = mysqli_fetch_array($result_sum);
 $slave_number = $row['slave_number'];
-$query1 = "UPDATE sections_hierarchy SET slave_number=(slave_number-1) WHERE slave_number > " . $slave_number;
+$query1 = "UPDATE sections_hierarchy SET slave_number=(slave_number-1) WHERE id_master = " . $master_id . " AND slave_number > " . $slave_number;
 $query2 = "DELETE FROM sections_hierarchy WHERE id_master = " . $master_id . " AND id_slave = " . $slave_id;
 mysqli_query($con, $query1);
 mysqli_query($con, $query2);
