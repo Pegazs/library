@@ -1,13 +1,13 @@
 <?php
 session_start();
-if(empty($_SESSION['usr_id'])) {
+if (empty($_SESSION['usr_id'])) {
     header("Location: ../index.php");
 }
 include_once 'dbconnectLib.php';
 include_once '../dbconnect.php';
 header('X-Frame-Options: GOFORIT');
-$keywords=$_POST["title"];
-$filter=$_POST["filter"];
+$keywords = $_POST["title"];
+$filter = $_POST["filter"];
 //$keywords=str_replace(" ", "+", $keywords);
 //
 //$baseurl="https://duckduckgo.com/?q=";
@@ -27,26 +27,32 @@ $filter=$_POST["filter"];
 //echo "<iframe src=$fullurl id=\"iframe\" target=\"_blank\" frameborder=\"0\" style=\"position: relative; top:-200px; overflow:hidden;height:800px;width:102.5%\"></iframe>";
 
 
-$keywords = mysqli_real_escape_string($conLib , $keywords);
+$keywords = mysqli_real_escape_string($conLib, $keywords);
 
 
 switch ($filter) {
     case "all":
-        $query = "SELECT * FROM pages, books WHERE books.id=pages.book_id AND books.id=77 AND MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE)";
+        $query = "SELECT * FROM pages, books WHERE books.id=pages.book_id AND MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) AND books.id IN (71, 72, 88, 73, 89, 86, 87)";
+        break;
+    case "index-double-check":
+        $query = "SELECT DISTINCT pages.*, books.* FROM pages, books, books_index WHERE books_index.book_id=books.id AND books.id=pages.book_id AND MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) AND books.id IN (71, 72, 88, 73, 89, 86, 87) AND pages.page_number IN (SELECT books_index.page_number FROM books_index WHERE books_index.book_id=books.id AND MATCH(books_index.text) AGAINST ('$keywords' IN BOOLEAN MODE))";
+        break;
+    case "index-simple":
+        $query = "SELECT DISTINCT pages.*, books.* FROM pages, books, books_index WHERE books_index.book_id=books.id AND books.id=pages.book_id AND books.id IN (71, 72, 88, 73, 89, 86, 87) AND pages.page_number IN (SELECT books_index.page_number FROM books_index WHERE books_index.book_id=books.id AND MATCH(books_index.text) AGAINST ('$keywords' IN BOOLEAN MODE))";
         break;
     case "best-one":
     default:
-        $query = "SELECT * FROM books, (SELECT *, max(score) FROM (SELECT *, MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) score FROM pages WHERE MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE)) AS dataScore group by book_id) as dataFull WHERE books.id=book_id ORDER BY score desc";
+        $query = "SELECT * FROM books, (SELECT *, max(score) FROM (SELECT *, MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE) score FROM pages WHERE MATCH(pages.text) AGAINST ('$keywords' IN BOOLEAN MODE)) AS dataScore group by book_id) as dataFull WHERE books.id=book_id AND books.id IN (71, 72, 88, 73, 89, 86, 87) ORDER BY score desc";
         break;
 }
 //$query = "SELECT * FROM pages, books WHERE books.id=pages.book_id AND MATCH(text) AGAINST ('$keywords')";
 //$query = "SELECT *, FROM pages, books WHERE books.id=pages.book_id AND MATCH(text) AGAINST ('$keywords' IN BOOLEAN MODE)";
-mysqli_query($conLib , "SET sql_mode = ''");
-$result = mysqli_query($conLib , $query);
-$found=mysqli_num_rows($result);
+mysqli_query($conLib, "SET sql_mode = ''");
+$result = mysqli_query($conLib, $query);
+$found = mysqli_num_rows($result);
 
-if($found>0){
-    while($row=mysqli_fetch_array($result)){
+if ($found > 0) {
+    while ($row = mysqli_fetch_array($result)) {
         $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
         echo "<li class='link'><a target='_blank' href=/library/books/$entryRu#page=$row[page_number]>$row[name]</a>";
         if (strlen($row['authors'])) {
@@ -54,7 +60,7 @@ if($found>0){
         }
         echo ", страница $row[page_number]</li>";
     }
-}else{
+} else {
     echo "<li>Соответствий не найдено</li>";
 }
 // ajax search
