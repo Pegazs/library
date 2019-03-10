@@ -37,7 +37,7 @@ if (isset($id)) {
     }
 
     if (isset($question_id)) {
-        $query = "SELECT DISTINCT *
+        $query = "SELECT DISTINCT z.*
 FROM (SELECT
         p.id,
         p.page_number,
@@ -55,7 +55,7 @@ FROM (SELECT
                                                              pc1.session_id,
                                                              pc1.page_id
                                                            FROM page_clicked pc1
-                                                           WHERE pc1.question_id = " . $question_id . "))
+                                                           WHERE pc1.question_id = " . $question_id . " and pc1.session_id=s1.id and p.id = pc1.page_id))
           +
           (SELECT avg(s2.result_percent)
            FROM sessions s2
@@ -65,19 +65,21 @@ FROM (SELECT
                           pc2.session_id,
                           pc2.page_id
                         FROM page_clicked pc2
-                        WHERE pc2.question_id = " . $question_id . " AND pc2.session_id = s2.id))
+                        WHERE pc2.question_id = " . $question_id . " AND pc2.session_id = s2.id and p.id = pc2.page_id))
           +
-          (SELECT avg(avg_users_table.avg_users)
-           FROM (SELECT avg(s3.result_percent) AS avg_users
-                 FROM sessions s3 join users u3 ON s3.user_id = u3.id
-                 WHERE s3.result_percent is not null and exists(SELECT DISTINCT
-                                pc3.user_id,
-                                pc3.question_id,
-                                pc3.session_id,
-                                pc3.page_id
-                              FROM page_clicked pc3
-                              WHERE pc3.question_id = " . $question_id . " and pc3.user_id = u3.id)
-                 GROUP BY s3.user_id) avg_users_table
+          (SELECT avg(s3.result_percent) AS avg_users
+           FROM sessions s3
+             JOIN users u3 ON s3.user_id = u3.id
+           WHERE s3.result_percent IS NOT NULL AND exists(SELECT DISTINCT
+                                                            pc3.user_id,
+                                                            pc3.question_id,
+                                                            pc3.session_id,
+                                                            pc3.page_id
+                                                          FROM page_clicked pc3
+                                                          WHERE
+                                                            pc3.question_id = " . $question_id . " AND pc3.user_id = u3.id AND
+                                                            p.id = pc3.page_id
+           )
           )
         ) AS good
       FROM books b
@@ -86,7 +88,8 @@ FROM (SELECT
       WHERE pc.question_id = " . $question_id . ") z
 WHERE z.good IS NOT NULL
 ORDER BY z.good DESC
-LIMIT 3";
+LIMIT 3
+";
         $result = mysqli_query($con, $query);
         $found = mysqli_num_rows($result);
         if ($found > 0) {
