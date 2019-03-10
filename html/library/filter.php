@@ -18,12 +18,15 @@ $theme_id = mysqli_fetch_object($test)->theme_id;
 <head>
     <script type="text/javascript">
         $(document).ready(function () {
-            filter('<?php echo $text; ?>');
+            //filter('<?php //echo $text; ?>//');
             <?php if ($theme_id) { ?>
             show_library('<?php echo $theme_id; ?>');
 
             function show_library(id) {
-                $.get("section_operations/show-library.php", {id: id}).done(function (data) {
+                console.log("TEST");
+                $.get("section_operations/show-library.php", {
+                    id: id,
+                    question_id: <?php echo $question_id; ?>}).done(function (data) {
                     // Display the returned data in browser
                     var element = document.getElementById("library-box");
                     $(element).html(data + "<hr>");

@@ -29,13 +29,28 @@ if(empty($_SESSION['usr_id'])) {
 
 
     <script type="text/javascript">
+
+        function pageClicked(pageId) {
+            $.ajax({
+                type:"post",
+                url:"pageClicked.php",
+                "data": {
+                    "page_id": pageId,
+                    "user_id": <?php echo $_SESSION['usr_id'] ?>
+                },
+                success:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
         $(document).ready(function(){
 
             function search(){
                 var title=$("#search").val();
                 var filter = $("#filter").val();
 
-                if(title!=""){
+                if(title!==""){
                     $("#result").html("<img src='ajax-loader.gif'/>");
                     $.ajax({
                         type:"post",

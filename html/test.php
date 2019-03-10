@@ -123,7 +123,7 @@ if (isset($_POST['skipAnswer'])) {
 
 if (isset($_POST['surrender']) || $time_left <= 0) {
     $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-    mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result = " . $correct . " WHERE id = " . $session_id);
+    mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $correct . " WHERE id = " . $session_id);
     header("Location: result.php?id=" . $session_id);
 }
 
@@ -132,7 +132,7 @@ if (mysqli_num_rows($isFinished) == 0) {
     $isSkipped = mysqli_query($con, "SELECT * FROM questions_session WHERE skipped = true AND session_id=" . $session_id);
     if (mysqli_num_rows($isSkipped) == 0) {
         $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-        mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result = " . $correct . " WHERE id = " . $session_id);
+        mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001),result = " . $correct . " WHERE id = " . $session_id);
         header("Location: result.php?id=" . $session_id);
     } else {
         mysqli_query($con, "UPDATE questions_session SET skipped = false WHERE session_id = " . $session_id);
@@ -214,6 +214,7 @@ if (mysqli_num_rows($isFinished) == 0) {
         }
 
         function showlibrary(q_id) {
+            console.log(q_id);
             $.ajax({
                 type: "post",
                 url: "library/filter.php",
@@ -221,7 +222,12 @@ if (mysqli_num_rows($isFinished) == 0) {
                     "question_id": q_id
                 },
                 success: function (data) {
-                    $("#library").html(data);
+                    console.log(data);
+                    if (data != null) {
+                        $("#library").html(data);
+                    } else {
+                        $("#library").html("")
+                    }
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'library']);
                     $('#popuplibrary').w2popup();
                 }
@@ -270,7 +276,7 @@ if (mysqli_num_rows($isFinished) == 0) {
                                 ?>
                                 <div style="text-align: center;" class="form-group">
                                     <b>Помощь:</b> <a name="newquestion"
-                                                      onclick="showlibrary('<?php echo $questions->id; ?>')"
+                                                      onclick="showlibrary(<?php echo $questions->id; ?>)"
                                                       class="btn btn-default btn-sm">Библиотека</a>
                                     <?php
 
@@ -436,6 +442,20 @@ if (mysqli_num_rows($isFinished) == 0) {
 <script type="text/javascript" src="js/w2ui-1.5.rc1.min.js"></script>
 <script type="text/javascript" async src="MathJax/MathJax.js?config=default"></script>
 
+<script type="text/javascript">
+    function pageClicked(pageId) {
+        $.ajax({
+            type: "post",
+            url: "library/pageClicked.php",
+            "data": {
+                "page_id": pageId,
+                "session_id": <?php echo $session_id; ?>,
+                "question_id": <?php echo $questions->id; ?>,
+                "user_id": <?php echo $_SESSION['usr_id'] ?>
+            }
+        });
+    }
+</script>
 <?php if ($test_info->minutes > 0) { ?>
     <script type="text/javascript">//<![CDATA[
         var remain_bv = <?php echo $time_left;  ?>;

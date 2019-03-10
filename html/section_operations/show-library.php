@@ -8,6 +8,12 @@ if ($con === false) {
 
 // Escape user inputs for security
 $id = mysqli_real_escape_string($con, $_REQUEST['id']);
+
+
+if (!empty($_REQUEST['question_id'])) {
+    $question_id = mysqli_real_escape_string($con, $_REQUEST['question_id']);
+}
+
 if (isset($id)) {
 
     $queryM = "SELECT * FROM sections WHERE id = " . $id;
@@ -30,17 +36,82 @@ if (isset($id)) {
         $typeNameRod = "темы";
     }
 
+    if (isset($question_id)) {
+        $query = "SELECT DISTINCT *
+FROM (SELECT
+        p.id,
+        p.page_number,
+        p.book_id,
+        b.name,
+        b.authors,
+        b.file_name,
+        (
+          (SELECT (avg(qs1.correct))
+           FROM questions_session qs1
+             JOIN sessions s1 ON qs1.session_id = s1.id
+           WHERE qs1.question_id = " . $question_id . " AND exists(SELECT DISTINCT
+                                                             pc1.user_id,
+                                                             pc1.question_id,
+                                                             pc1.session_id,
+                                                             pc1.page_id
+                                                           FROM page_clicked pc1
+                                                           WHERE pc1.question_id = " . $question_id . "))
+          +
+          (SELECT avg(s2.result_percent)
+           FROM sessions s2
+           WHERE exists(SELECT DISTINCT
+                          pc2.user_id,
+                          pc2.question_id,
+                          pc2.session_id,
+                          pc2.page_id
+                        FROM page_clicked pc2
+                        WHERE pc2.question_id = " . $question_id . " AND pc2.session_id = s2.id))
+          +
+          (SELECT avg(avg_users_table.avg_users)
+           FROM (SELECT avg(s3.result_percent) AS avg_users
+                 FROM sessions s3 join users u3 ON s3.user_id = u3.id
+                 WHERE s3.result_percent is not null and exists(SELECT DISTINCT
+                                pc3.user_id,
+                                pc3.question_id,
+                                pc3.session_id,
+                                pc3.page_id
+                              FROM page_clicked pc3
+                              WHERE pc3.question_id = " . $question_id . " and pc3.user_id = u3.id)
+                 GROUP BY s3.user_id) avg_users_table
+          )
+        ) AS good
+      FROM books b
+        JOIN pages p ON b.id = p.book_id
+        JOIN page_clicked pc ON pc.page_id = p.id
+      WHERE pc.question_id = " . $question_id . ") z
+WHERE z.good IS NOT NULL
+ORDER BY z.good DESC
+LIMIT 3";
+        $result = mysqli_query($con, $query);
+        $found = mysqli_num_rows($result);
+        if ($found > 0) {
+            echo "<h4>Рекомендованные материалы:</h4>";
+            while ($row = mysqli_fetch_array($result)) {
+                $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
+                echo "<li class='link'><a target='_blank' onclick='pageClicked($row[id])' href=/library/books/$entryRu>$row[name]</a>";
+                if (strlen($row['authors'])) {
+                    echo " ($row[authors])";
+                }
+                echo ", страница $row[page_number]</li>";
+            }
+            echo "<br>";
+        }
 
-    echo "<hr/>";
-    echo "<h4>Список книг для $typeNameRod «";
-    echo $name;
-    echo "» из <a href='/library/books.php' target='_blank'>библиотеки</a>:</h4>";
+    }
 
     $query = "SELECT * FROM sections_books s, books b WHERE s.section_id = " . $id . " AND s.book_id = b.id ORDER BY b.name";
     $result = mysqli_query($con, $query);
     $found = mysqli_num_rows($result);
 
     if ($found > 0) {
+        echo "<h4>Список книг для $typeNameRod «";
+        echo $name;
+        echo "» из <a href='/library/books.php' target='_blank'>библиотеки</a>:</h4>";
         while ($row = mysqli_fetch_array($result)) {
             $entryRu = mb_convert_encoding($row['file_name'], "UTF8", "Windows-1251");
             echo "<li class='link'><a target='_blank' href=/library/books/$entryRu>$row[name]</a>";
@@ -69,8 +140,6 @@ if (isset($id)) {
             }
         }
         echo "<br>";
-    } else if ($_SESSION['usr_role'] == 'student') {
-        echo "Книги по теме не заданы";
     }
     if ($_SESSION['usr_role'] == 'teacher' OR $_SESSION['usr_role'] == 'admin') {
         echo "<b>Прикрепить книгу:</b><br>";
