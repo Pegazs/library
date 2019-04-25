@@ -23,6 +23,9 @@ if (mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_array($result);
     $test_name = $row['name'];
     $minimal_correct = $row['necessary'];
+    $in_session = $row['in_session'];
+    $min_difficulty = $row['min_difficulty'];
+    $max_difficulty = $row['max_difficulty'];
     $timer = $row['minutes'];
     $user_group = $row['user_group'];
     $disable_show = $row['disable_show'];
@@ -41,9 +44,11 @@ $error = false;
 
 if (isset($_POST['savetest'])) {
     $test_name = mysqli_real_escape_string($con, $_POST['test_name']);
-    $theme_name = mysqli_real_escape_string($con, $_POST['test_theme']);
     $test_id = mysqli_real_escape_string($con, $_POST['id']);
     $minimal_correct = mysqli_real_escape_string($con, $_POST['minimal_correct']);
+    $in_session = mysqli_real_escape_string($con, $_POST['in_session']);
+    $min_difficulty = mysqli_real_escape_string($con, $_POST['min_difficulty']);
+    $max_difficulty = mysqli_real_escape_string($con, $_POST['max_difficulty']);
     $timer = mysqli_real_escape_string($con, $_POST['timer']);
     $user_group = mysqli_real_escape_string($con, $_POST['user_group']);
     if (empty($_POST['disable_show_box'])) {
@@ -59,6 +64,21 @@ if (isset($_POST['savetest'])) {
     if ($minimal_correct == "") {
         $minimal_correct = 0;
     }
+    if ($in_session == "") {
+        $in_session = "NULL";
+    } else {
+        $in_session = "'" . $in_session . "'";
+    }
+      if ($min_difficulty == "") {
+        $min_difficulty = "NULL";
+    } else {
+        $min_difficulty = "'" . $min_difficulty . "'";
+    }
+    if ($max_difficulty == "") {
+        $max_difficulty = "NULL";
+    } else {
+        $max_difficulty = "'" . $max_difficulty . "'";
+    }
     if ($timer == "") {
         $timer = 0;
     }
@@ -72,13 +92,13 @@ if (isset($_POST['savetest'])) {
     }
     if (!$error) {
         if ($user_group == "NULL") {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.", necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
                 header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
             }
         } else {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "',  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.",  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
                 header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
@@ -225,6 +245,35 @@ if (isset($_POST['savetest'])) {
                         <span class="text-danger"><?php if (isset($test_name_error)) echo $test_name_error; ?></span>
                         <input type="hidden" value="<?php echo $test_id ?>" name="id" readonly="readonly" required
                                value="<?php if ($error) echo $test_id; ?>" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="min_difficulty">Минимальная сложность вопросов</label>
+                        <input type="text" name="min_difficulty"
+                               placeholder="Вопросы не менее данной сложности будут в сессиях"
+                               value="<?php if ($min_difficulty > 0) {
+                                   echo $min_difficulty;
+                               } ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($min_difficulty_error)) echo $min_difficulty_error; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="max_difficulty">Максимальная сложность вопросов</label>
+                        <input type="text" name="max_difficulty"
+                               placeholder="Вопросы не более данной сложности будут в сессиях"
+                               value="<?php if ($max_difficulty > 0) {
+                                   echo $max_difficulty;
+                               } ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($max_difficulty_error)) echo $max_difficulty_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="in_session">Число вопросов в сессии</label>
+                        <input type="text" name="in_session"
+                               placeholder="Используемых вопросов в сессии (если пустое, то все)"
+                               value="<?php if ($in_session > 0) {
+                                   echo $in_session;
+                               } ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($in_session_error)) echo $in_session_error; ?></span>
                     </div>
 
                     <div class="form-group">

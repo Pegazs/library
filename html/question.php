@@ -174,13 +174,13 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                                 <span class="input-group-addon success"><span
                                                             class="glyphicon glyphicon-ok"></span></span>
                                             <?php } ?>
-                                            <textarea rows="1" <textarea rows="1"
-                                                                         id="<?php echo $answer_object->id ?>answer_text"
+                                            <input type="text"
+                                                   id="<?php echo $answer_object->id ?>answer_text"
                                                                          name="answer_text"
                                                                          oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                                          placeholder="Введите текст ответа"
                                                                          value="<?php echo $answer_object->answer_text; ?>"
-                                                                         class="form-control form-control-success"/></textarea>
+                                                                         class="form-control form-control-success"/>
                                         </div>
                                     </div>
 
@@ -202,7 +202,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-9">
-                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
                                               name="answer_text_new" placeholder="Введите текст ответа"
                                               class="form-control form-control-success"/></textarea>
                                 </div>
@@ -224,7 +224,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-12">
-                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
                                               name="answer_text_new" placeholder="Введите текст ответа"
                                               oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                               value="<?php echo $input_answer->answer_text; ?>"
@@ -242,7 +242,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                 <fieldset>
                                     <hr/>
                                     <div class="col-sm-5">
-                                        <textarea rows="1" id="<?php echo $answer_object->id ?>answer_text"
+                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text"
                                                   name="answer_text"
                                                   oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                   placeholder="Введите текст ответа"
@@ -251,7 +251,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                     </div>
 
                                     <div class="col-sm-5">
-                                        <textarea rows="1" id="<?php echo $answer_object->id ?>answer_text2"
+                                        <input type="text" id="<?php echo $answer_object->id ?>answer_text2"
                                                   name="answer_text2"
                                                   oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
                                                   placeholder="Введите текст соответствия"
@@ -273,7 +273,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-5">
-                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo mysqli_real_escape_string($questions_list->id) ?>answer_text_new"
                                               name="answer_text_new" placeholder="Введите текст ответа"
                                               class="form-control form-control-success"/></textarea>
                                 </div>
@@ -342,14 +342,25 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                     <hr/>
                     <b>Подтема:</b>
                     <fieldset>
-                        <hr/>
                         <div class="col-sm-12 ">
-                            <textbox id="<?php echo $questions_list->id ?>subtheme" name="subtheme"
+                            <input type="text"  id="<?php echo $questions_list->id ?>subtheme" name="subtheme"
                                       oninput="editsubtheme('<?php echo $questions_list->id; ?>')"
                                       placeholder="Укажите подтему"
                                       value="<?php echo $questions_list->subtheme; ?>"
                                       class="form-control form-control-success"/></textarea>
                         </div>
+                    </fieldset>
+                        <hr/>
+                        <b>Сложность:</b>
+                        <fieldset>
+                            <div class="col-sm-12 ">
+                                <input type="text"  id="<?php echo $questions_list->id ?>difficulty" name="difficulty"
+                                         oninput="editdifficulty('<?php echo $questions_list->id; ?>')"
+                                         placeholder="Укажите сложность"
+                                         value="<?php echo $questions_list->difficulty; ?>"
+                                         class="form-control form-control-success"/></textarea>
+                            </div>
+                        </fieldset>
                 </td>
             </tr>
         </table>

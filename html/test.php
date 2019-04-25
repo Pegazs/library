@@ -43,6 +43,8 @@ if (isset($_POST['submitAnswer'])) {
     $question_num = mysqli_real_escape_string($con, $_POST['questionnum']);
     $question_type = mysqli_real_escape_string($con, $_POST['questiontype']);
     $question_id = mysqli_real_escape_string($con, $_POST['questionid']);
+    $question_secs = mysqli_real_escape_string($con, $_POST['questionsecs']);
+    mysqli_query($con, "UPDATE questions_session SET time_on_question = time_on_question + ".$question_secs." WHERE order_num = " . $question_num . " AND session_id = " . $session_id);
     switch ($question_type) {
         case "radiobutton":
             $answers_select = mysqli_query($con, "SELECT * from answers WHERE answer_true = true AND question_id = " . $question_id);
@@ -117,7 +119,9 @@ if (isset($_POST['submitAnswer'])) {
 
 if (isset($_POST['skipAnswer'])) {
     $question_num = mysqli_real_escape_string($con, $_POST['questionnum']);
-    mysqli_query($con, "UPDATE questions_session SET skipped = true WHERE order_num = " . $question_num . " AND session_id = " . $session_id);
+    $question_secs = mysqli_real_escape_string($con, $_POST['questionsecs']);
+    $skip_query = "UPDATE questions_session SET skipped = true, time_on_question = time_on_question + ".$question_secs." WHERE order_num = " . $question_num . " AND session_id = " . $session_id;
+    mysqli_query($con, $skip_query);
 }
 
 
@@ -235,6 +239,59 @@ if (mysqli_num_rows($isFinished) == 0) {
         }
     </script>
 
+
+    <script type="text/javascript">//<![CDATA[
+        <?php if ($test_info->minutes > 0) { ?>
+        var remain_bv = <?php echo $time_left;  ?>;
+
+
+        function parseTime_bv(timestamp) {
+            if (timestamp < 0) timestamp = 0;
+
+            var day = Math.floor((timestamp / 60 / 60) / 24);
+            var hour = Math.floor(timestamp / 60 / 60);
+            var mins = Math.floor(timestamp / 60);
+            var mins_for_secs = Math.floor((timestamp - hour * 60 * 60) / 60);
+            var secs = Math.floor(timestamp - hour * 60 * 60 - mins_for_secs * 60);
+            var left_hour = Math.floor((timestamp - day * 24 * 60 * 60) / 60 / 60);
+
+            $('span.afss_day_bv').text(day);
+            $('span.afss_hours_bv').text(left_hour);
+
+            $('span.afss_mins_bv').text(mins);
+
+            if (String(secs).length > 1)
+                $('span.afss_secs_bv').text(secs);
+            else
+                $('span.afss_secs_bv').text("0" + secs);
+
+        }
+
+        <?php } ?>
+
+        var seconds = 0;
+
+        $(document).ready(function () {
+            <?php if ($test_info->minutes > 0) { ?>
+            setInterval(function () {
+                remain_bv = remain_bv - 1;
+                parseTime_bv(remain_bv);
+                if (remain_bv <= 0) {
+                    window.location = "test.php?id=<?php echo $session_id ?>";
+                }
+            }, 1000);
+            <?php } ?>
+
+            setInterval(function () {
+                seconds = seconds + 1;
+                document.getElementById("questionsecs").value = seconds.toString();
+            }, 1000);
+
+
+        });
+        //]]>
+    </script>
+
 </head>
 <body>
 
@@ -311,6 +368,8 @@ if (mysqli_num_rows($isFinished) == 0) {
                             <div class="form-group">
                                 <input type="hidden" value="<?php echo $session_id ?>" name="id" readonly="readonly"
                                        required class="form-control"/>
+                                <input type="hidden" value="0" id = "questionsecs" name="questionsecs"
+                                       readonly="readonly" required class="form-control"/>
                                 <input type="hidden" value="<?php echo $question_num ?>" name="questionnum"
                                        readonly="readonly" required class="form-control"/>
                                 <input type="hidden" value="<?php echo $question_type ?>" name="questiontype"
@@ -456,47 +515,6 @@ if (mysqli_num_rows($isFinished) == 0) {
         });
     }
 </script>
-<?php if ($test_info->minutes > 0) { ?>
-    <script type="text/javascript">//<![CDATA[
-        var remain_bv = <?php echo $time_left;  ?>;
-
-        function parseTime_bv(timestamp) {
-            if (timestamp < 0) timestamp = 0;
-
-            var day = Math.floor((timestamp / 60 / 60) / 24);
-            var hour = Math.floor(timestamp / 60 / 60);
-            var mins = Math.floor(timestamp / 60);
-            var mins_for_secs = Math.floor((timestamp - hour * 60 * 60) / 60);
-            var secs = Math.floor(timestamp - hour * 60 * 60 - mins_for_secs * 60);
-            var left_hour = Math.floor((timestamp - day * 24 * 60 * 60) / 60 / 60);
-
-            $('span.afss_day_bv').text(day);
-            $('span.afss_hours_bv').text(left_hour);
-
-            $('span.afss_mins_bv').text(mins);
-
-            if (String(secs).length > 1)
-                $('span.afss_secs_bv').text(secs);
-            else
-                $('span.afss_secs_bv').text("0" + secs);
-
-        }
-
-        $(document).ready(function () {
-
-            setInterval(function () {
-                remain_bv = remain_bv - 1;
-                parseTime_bv(remain_bv);
-                if (remain_bv <= 0) {
-                    window.location = "test.php?id=<?php echo $session_id ?>";
-                }
-            }, 1000);
-
-
-        });
-        //]]>
-    </script>
-<?php } ?>
 </body>
 </html>
 

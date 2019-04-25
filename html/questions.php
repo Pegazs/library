@@ -370,6 +370,13 @@ if (isset($_POST['newquestion'])) {
                 "subtheme": s_text.value
             });
         }
+        function editdifficulty(q_id) {
+            var s_text = document.getElementById(q_id + "difficulty");
+            $.post("question_operations/setdifficulty.php", {
+                "question_id": q_id,
+                "difficulty": s_text.value
+            });
+        }
 
         $(document).ready(function () {
             var x = document.getElementsByName("test_question");
@@ -518,7 +525,6 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id 
     }
 }
 ?>
-
 </div>
 <div class="col-md-2">
     <a href="/" class="btn btn-primary btn-block">Вернуться на главную</a>
