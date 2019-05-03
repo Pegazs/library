@@ -218,6 +218,11 @@ $error_msg = "";
                                         </td>
                                     </tr>
                                 <?php } ?>
+                                <tr class="info">
+                                    <td>
+                                        <b>Затрачено на вопрос:</b> <?php echo($questions->time_on_question) ?> с.
+                                    </td>
+                                </tr>
                             </table>
 
                         <?php }
