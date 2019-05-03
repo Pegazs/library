@@ -127,7 +127,8 @@ if (isset($_POST['skipAnswer'])) {
 
 if (isset($_POST['surrender']) || $time_left <= 0) {
     $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-    mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $correct . " WHERE id = " . $session_id);
+    $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+    mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $results_info->result . " WHERE id = " . $session_id);
     header("Location: result.php?id=" . $session_id);
 }
 
@@ -136,7 +137,8 @@ if (mysqli_num_rows($isFinished) == 0) {
     $isSkipped = mysqli_query($con, "SELECT * FROM questions_session WHERE skipped = true AND session_id=" . $session_id);
     if (mysqli_num_rows($isSkipped) == 0) {
         $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-        mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001),result = " . $correct . " WHERE id = " . $session_id);
+        $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+        mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $results_info->result . " WHERE id = " . $session_id);
         header("Location: result.php?id=" . $session_id);
     } else {
         mysqli_query($con, "UPDATE questions_session SET skipped = false WHERE session_id = " . $session_id);

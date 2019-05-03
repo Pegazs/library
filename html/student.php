@@ -21,7 +21,7 @@ if (isset($_POST['start'])) {
 
             $localQuery = "SELECT * FROM questions WHERE test_id = " . $test_id;
             if ($minDif != null) {
-                $localQuery = $localQuery . " AND (difficulty <= " . $minDif. " OR difficulty is null)";
+                $localQuery = $localQuery . " AND (difficulty >= " . $minDif. " OR difficulty is null)";
             }
             if ($maxDif != null) {
                 $localQuery = $localQuery . " AND (difficulty <= " . $maxDif . " OR difficulty is null)";
