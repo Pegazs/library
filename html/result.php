@@ -108,10 +108,15 @@ $error_msg = "";
                             } ?>
                         </div>
                         <div class="col-md-6">
-                            <b>Результат:</b> <?php echo $session_info->result; ?> <?php if (($session_info->result) >= ($test_info->necessary)) {
-                                echo "<font color=#006600>(пройден)</font>";
+                            <b>Результат:</b> <?php echo $session_info->result;
+                            if ($_SESSION['usr_role'] == "teacher") {
+                                echo " [с учётом сложности: $session_info->result_with_difficulty]";
+                            }
+
+                            if (($session_info->result) >= ($test_info->necessary)) {
+                                echo " <font color=#006600>(пройден)</font>";
                             } else {
-                                echo "<font color=#CC0033>(не пройден)</font>";
+                                echo " <font color=#CC0033>(не пройден)</font>";
                             } ?>
                         </div>
                         <br><br>
