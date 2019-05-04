@@ -23,6 +23,8 @@ if (mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_array($result);
     $test_name = $row['name'];
     $minimal_correct = $row['necessary'];
+    $tips_penalty = $row['tips_penalty'];
+    $show_tips = $row['show_tips'];
     $in_session = $row['in_session'];
     $min_difficulty = $row['min_difficulty'];
     $max_difficulty = $row['max_difficulty'];
@@ -55,6 +57,16 @@ if (isset($_POST['savetest'])) {
         $disable_show = 0;
     } else {
         $disable_show = 1;
+    }
+    if (empty($_POST['tips_penalty'])) {
+        $tips_penalty = 0;
+    } else {
+        $tips_penalty = 1;
+    }
+    if (empty($_POST['show_tips'])) {
+        $show_tips = 0;
+    } else {
+        $show_tips = 1;
     }
     if (empty($_POST['archive_box'])) {
         $archive = 0;
@@ -92,13 +104,13 @@ if (isset($_POST['savetest'])) {
     }
     if (!$error) {
         if ($user_group == "NULL") {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.", necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.", necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', tips_penalty = '" . $tips_penalty . "', show_tips = '" . $show_tips . "', archive = '" . $archive . "', user_group = NULL  WHERE id = '" . $test_id . "'")) {
                 header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
             }
         } else {
-            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.",  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
+            if (mysqli_query($con, "UPDATE tests SET name = '" . $test_name . "', min_difficulty = ".$min_difficulty.", max_difficulty = ".$max_difficulty.", in_session = ".$in_session.",  necessary = '" . $minimal_correct . "', minutes = '" . $timer . "', disable_show = '" . $disable_show . "', tips_penalty = '" . $tips_penalty . "', show_tips = '" . $show_tips . "', archive = '" . $archive . "', user_group = '" . $user_group . "'  WHERE id = '" . $test_id . "'")) {
                 header("Location: questions.php?id=" . $test_id);
             } else {
                 $errormsg = "Ошибка при обновлении названия. Пожалуйста, попробуйте ещё раз";
@@ -323,6 +335,20 @@ if (isset($_POST['savetest'])) {
                             echo 'checked';
                         } ?> /> Не отображать правильные ответы после прохождения теста
                         <span class="text-danger"><?php if (isset($disable_show_box_error)) echo $disable_show_box_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" name="show_tips" <?php if ($show_tips == 1) {
+                            echo 'checked';
+                        } ?> /> Показывать подсказки и библиотеку
+                        <span class="text-danger"><?php if (isset($show_tips_error)) echo $show_tips_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" name="tips_penalty" <?php if ($tips_penalty == 1) {
+                            echo 'checked';
+                        } ?> /> Уменьшать баллы за использование подсказок и библиотеки
+                        <span class="text-danger"><?php if (isset($tips_penalty_error)) echo $tips_penalty_error; ?></span>
                     </div>
 
                     <div class="form-group">

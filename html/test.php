@@ -127,7 +127,21 @@ if (isset($_POST['skipAnswer'])) {
 
 if (isset($_POST['surrender']) || $time_left <= 0) {
     $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-    $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+    if ($test_info->tips_penalty) {
+        $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(greatest(1, (coalesce(q.difficulty, 1) - qs.tips_used - CASE WHEN exists(SELECT pc.*
+                                                                                             FROM page_clicked pc
+                                                                                             WHERE pc.session_id =
+                                                                                                   qs.session_id AND
+                                                                                                   pc.question_id =
+                                                                                                   qs.question_id)
+  THEN 1
+                                                                            ELSE 0 END))), 0) AS result
+FROM questions_session qs
+  JOIN questions q ON qs.question_id = q.id
+WHERE qs.correct = TRUE AND qs.session_id = " . $session_id));
+    } else {
+        $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+    }
     mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $correct . ", result_with_difficulty = " . $results_info->result . " WHERE id = " . $session_id);
     header("Location: result.php?id=" . $session_id);
 }
@@ -137,7 +151,21 @@ if (mysqli_num_rows($isFinished) == 0) {
     $isSkipped = mysqli_query($con, "SELECT * FROM questions_session WHERE skipped = true AND session_id=" . $session_id);
     if (mysqli_num_rows($isSkipped) == 0) {
         $correct = mysqli_num_rows(mysqli_query($con, "SELECT * FROM questions_session WHERE correct = true AND session_id=" . $session_id));
-        $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+        if ($test_info->tips_penalty) {
+            $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(greatest(1, (coalesce(q.difficulty, 1) - qs.tips_used - CASE WHEN exists(SELECT pc.*
+                                                                                             FROM page_clicked pc
+                                                                                             WHERE pc.session_id =
+                                                                                                   qs.session_id AND
+                                                                                                   pc.question_id =
+                                                                                                   qs.question_id)
+  THEN 1
+                                                                            ELSE 0 END))), 0) AS result
+FROM questions_session qs
+  JOIN questions q ON qs.question_id = q.id
+WHERE qs.correct = TRUE AND qs.session_id = " . $session_id));
+        } else {
+            $results_info = mysqli_fetch_object(mysqli_query($con, "SELECT coalesce(sum(coalesce(q.difficulty, 1)), 0) as result FROM questions_session qs join questions q ON qs.question_id = q.id WHERE qs.correct = true AND qs.session_id = " . $session_id));
+        }
         mysqli_query($con, "UPDATE sessions SET status = 'finished', finish_time = CURRENT_TIMESTAMP, result_percent =" . $correct . " / ((SELECT count(*) from questions_session sq where sq.session_id = " . $session_id . ")+0.0000000001), result = " . $correct . ", result_with_difficulty = " . $results_info->result . " WHERE id = " . $session_id);
         header("Location: result.php?id=" . $session_id);
     } else {
@@ -331,7 +359,7 @@ if (mysqli_num_rows($isFinished) == 0) {
                             echo "Ошибка запроса, попробуйте ещё раз.";
                         } else {
                             $questions = mysqli_fetch_object($result_select);
-                            if ($test_info->mode == "TRAINING") {
+                            if ($test_info->mode == "TRAINING" || $test_info->show_tips) {
                                 ?>
                                 <div style="text-align: center;" class="form-group">
                                     <b>Помощь:</b> <a name="newquestion"

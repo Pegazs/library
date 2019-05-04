@@ -311,8 +311,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                 <textarea rows="1" id="<?php echo $tip_object->id ?>tip_text" name="tip_text"
                                           oninput="edittip('<?php echo $questions_list->id; ?>', '<?php echo $tip_object->id; ?>')"
                                           placeholder="Введите текст подсказки"
-                                          value="<?php echo $tip_object->tip_text; ?>"
-                                          class="form-control form-control-success"/></textarea>
+                                          class="form-control form-control-success"><?php echo $tip_object->tip_text; ?></textarea>
                             </div>
                             <div class="col-sm-2 input-group">
                                 <a name="deletetip"
@@ -329,7 +328,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                         <div class="col-sm-10">
                             <textarea rows="1" id="<?php echo $questions_list->id ?>tip_text_new" name="tip_text_new"
                                       placeholder="Введите текст подсказки"
-                                      class="form-control form-control-success"/></textarea>
+                                      class="form-control form-control-success"></textarea>
                         </div>
 
                         <div class="col-sm-2 input-group">

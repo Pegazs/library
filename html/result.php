@@ -110,7 +110,7 @@ $error_msg = "";
                         <div class="col-md-6">
                             <b>Результат:</b> <?php echo $session_info->result;
                             if ($_SESSION['usr_role'] == "teacher") {
-                                echo " [с учётом сложности: $session_info->result_with_difficulty]";
+                                echo " [с учётом сложности и подсказок: $session_info->result_with_difficulty]";
                             }
 
                             if (($session_info->result) >= ($test_info->necessary)) {
@@ -228,6 +228,13 @@ $error_msg = "";
                                         <b>Затрачено на вопрос:</b> <?php echo($questions->time_on_question) ?> с.
                                     </td>
                                 </tr>
+                                <?php if ($questions->tips_used > 0) { ?>
+                                    <tr class="info">
+                                        <td>
+                                            <b>Использовано подсказок:</b> <?php echo($questions->tips_used) ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
                             </table>
 
                         <?php }

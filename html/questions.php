@@ -511,7 +511,8 @@ if (isset($_POST['newquestion'])) {
 
 </table>
 <?php
-if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id = " . $test_id . " ORDER BY id DESC"))->num_rows > 0) {
+$result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id = " . $test_id . " ORDER BY id DESC");
+//if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id = " . $test_id . " ORDER BY id DESC"))->num_rows > 0) {
     ?>
     <hr/>
     <a name="place_newquestion"></a>
@@ -523,7 +524,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE test_id 
         echo "<div name='test_question' id='" . $questions_list->id . "'></div>";
 
     }
-}
+//}
 ?>
 </div>
 <div class="col-md-2">

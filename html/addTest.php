@@ -12,10 +12,38 @@ if (isset($_POST['addTest'])) {
     $minimal_correct = mysqli_real_escape_string($con, $_POST['minimal_correct']);
     $timer = mysqli_real_escape_string($con, $_POST['timer']);
     $user_group = mysqli_real_escape_string($con, $_POST['user_group']);
+    $in_session = mysqli_real_escape_string($con, $_POST['in_session']);
+    $min_difficulty = mysqli_real_escape_string($con, $_POST['min_difficulty']);
+    $max_difficulty = mysqli_real_escape_string($con, $_POST['max_difficulty']);
+    if(empty($_POST['show_tips'])) {
+        $show_tips = 0;
+    } else {
+        $show_tips = 1;
+    }
+    if(empty($_POST['tips_penalty'])) {
+        $tips_penalty = 0;
+    } else {
+        $tips_penalty = 1;
+    }
     if(empty($_POST['disable_show_box'])) {
         $disable_show = 0;
     } else {
         $disable_show = 1;
+    }
+    if ($in_session == "") {
+        $in_session = "NULL";
+    } else {
+        $in_session = "'" . $in_session . "'";
+    }
+    if ($min_difficulty == "") {
+        $min_difficulty = "NULL";
+    } else {
+        $min_difficulty = "'" . $min_difficulty . "'";
+    }
+    if ($max_difficulty == "") {
+        $max_difficulty = "NULL";
+    } else {
+        $max_difficulty = "'" . $max_difficulty . "'";
     }
     if(empty($_POST['archive_box'])) {
         $archive = 0;
@@ -39,14 +67,14 @@ if (isset($_POST['addTest'])) {
     if (!$error) {
         if ($user_group == "NULL")
         {
-            if(mysqli_query($con, "INSERT INTO tests(name,necessary,minutes,disable_show,archive,user_group) VALUES('" . $test_name . "','" . $minimal_correct . "','" . $timer . "'," . $disable_show . "," . $archive . ",NULL)")) {
+            if(mysqli_query($con, "INSERT INTO tests(name,min_difficulty,max_difficulty,in_session,tips_penalty,necessary,minutes,disable_show,archive,show_tips,user_group) VALUES('" . $test_name . "'," . $min_difficulty . "," . $max_difficulty . "," . $in_session . "," . $tips_penalty . ",'" . $minimal_correct . "','" . $timer . "'," . $disable_show . "," . $archive . "," . $show_tips . ",NULL)")) {
                 header("Location: questions.php?id=".mysqli_insert_id($con));
             } else {
                 $error = true;
                 $errormsg = "Ошибка при добавлении. Пожалуйста, попробуйте ещё раз";
             }
         } else {
-            if(mysqli_query($con, "INSERT INTO tests(name,necessary,minutes,disable_show,archive,user_group) VALUES('" . $test_name . "','" . $minimal_correct . "','" . $timer . "'," . $disable_show . "," . $archive . ",'" . $user_group . "')")) {
+            if(mysqli_query($con, "INSERT INTO tests(name,min_difficulty,max_difficulty,in_session,tips_penalty,necessary,minutes,disable_show,archive,show_tips,user_group) VALUES('" . $test_name . "'," . $min_difficulty . "," . $max_difficulty . "," . $in_session . "," . $tips_penalty . ",'" . $minimal_correct . "','" . $timer . "'," . $disable_show . "," . $archive . "," . $show_tips . ",'" . $user_group . "')")) {
                 header("Location: questions.php?id=".mysqli_insert_id($con));
             } else {
                 echo $user_group;
@@ -102,6 +130,29 @@ if (isset($_POST['addTest'])) {
                     </div>
 
                     <div class="form-group">
+                        <label for="min_difficulty">Минимальная сложность вопросов</label>
+                        <input type="text" name="min_difficulty"
+                               placeholder="Вопросы не менее данной сложности будут в сессиях"
+                               value="<?php if($error && $min_difficulty !== "NULL") echo str_replace("'", "", $min_difficulty); ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($min_difficulty_error)) echo $min_difficulty_error; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="max_difficulty">Максимальная сложность вопросов</label>
+                        <input type="text" name="max_difficulty"
+                               placeholder="Вопросы не более данной сложности будут в сессиях"
+                               value="<?php if($error && $max_difficulty !== "NULL") echo str_replace("'", "", $max_difficulty); ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($max_difficulty_error)) echo $max_difficulty_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="in_session">Число вопросов в сессии</label>
+                        <input type="text" name="in_session"
+                               placeholder="Используемых вопросов в сессии (если пустое, то все)"
+                               value="<?php if($error && $in_session !== "NULL") echo str_replace("'", "", $in_session); ?>" class="form-control"/>
+                        <span class="text-danger"><?php if (isset($in_session_error)) echo $in_session_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
                         <label for="minimal_correct">Минимальное число правильных ответов</label>
                         <input type="text" name="minimal_correct" placeholder="При его достижении тест будет считаться пройденным (по умолчанию 0)" value="<?php if($error && $minimal_correct > 0) echo $minimal_correct; ?>" class="form-control" />
                         <span class="text-danger"><?php if (isset($minimal_correct_error)) echo $minimal_correct_error; ?></span>
@@ -125,6 +176,16 @@ if (isset($_POST['addTest'])) {
                             ?>
                         </select>
                         <span class="text-danger"><?php if (isset($user_group_error)) echo $user_group_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" name="show_tips" <?php if($error) { if ($show_tips == 1) { echo 'checked'; } }; ?> /> Показывать подсказки и библиотеку
+                        <span class="text-danger"><?php if (isset($show_tips_error)) echo $show_tips_error; ?></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" name="tips_penalty" <?php if($error) { if ($tips_penalty == 1) { echo 'checked'; } }; ?> /> Уменьшать баллы за использование подсказок и библиотеки
+                        <span class="text-danger"><?php if (isset($tips_penalty_error)) echo $tips_penalty_error; ?></span>
                     </div>
 
                     <div class="form-group">
