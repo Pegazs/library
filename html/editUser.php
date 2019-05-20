@@ -22,7 +22,11 @@ if (mysqli_num_rows($result) > 0) {
 //check if form is submitted
 if (isset($_POST['saveuser'])) {
     $name = mysqli_real_escape_string($con, $_POST['name']);
-    $user_group = mysqli_real_escape_string($con, $_POST['user_group']);
+    if (isset($_POST['user_group'])) {
+        $user_group = mysqli_real_escape_string($con, $_POST['user_group']);
+    } else {
+        $user_group = "NULL";
+    }
 
     if (!preg_match("/^[а-яА-ЯёЁa-zA-Z ]+$/u", $name)) {
         $error = true;

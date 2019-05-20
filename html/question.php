@@ -224,9 +224,9 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-12">
-                                    <input type="text" id="<?php echo $questions_list->id ?>answer_text_new"
-                                              name="answer_text_new" placeholder="Введите текст ответа"
-                                              oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $answer_object->id; ?>')"
+                                    <input type="text" id="<?php echo $input_answer->id ?>answer_text"
+                                           name="answer_text" placeholder="Введите текст ответа"
+                                              oninput="editanswer('<?php echo $questions_list->id; ?>', '<?php echo $questions_list->type; ?>', '<?php echo $input_answer->id; ?>')"
                                               value="<?php echo $input_answer->answer_text; ?>"
                                               class="form-control form-control-success"/></textarea>
                                 </div>
@@ -262,7 +262,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                                         <?php if ($result_select_answer->num_rows > 1) { ?>
                                             <a name="deleteanswer"
                                                onclick="deleteanswer('<?php echo $questions_list->id; ?>', '<?php echo $answer_object->id; ?>', '<?php echo $answer_object->answer_number; ?>')"
-                                               class="btn btn-sm btn-danger">"Уд."</a>
+                                               class="btn btn-sm btn-danger">Уд.</a>
                                         <?php } ?>
                                     </div>
                                 </fieldset>
@@ -273,7 +273,7 @@ if (($result_select = mysqli_query($con, "SELECT * FROM questions WHERE id = " .
                             <fieldset>
                                 <hr/>
                                 <div class="col-sm-5">
-                                    <textarea rows="1" id="<?php echo mysqli_real_escape_string($questions_list->id) ?>answer_text_new"
+                                    <textarea rows="1" id="<?php echo $questions_list->id ?>answer_text_new"
                                               name="answer_text_new" placeholder="Введите текст ответа"
                                               class="form-control form-control-success"/></textarea>
                                 </div>
